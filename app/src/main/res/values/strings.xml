@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">SunnyDay</string>
+    <string name="home">Home</string>
+    <string name="settings">Settings</string>
+    <string name="search">Search</string>
+
+    <string name="fragment_btm_nav">fragment_bottom_nav</string>
+    <string name="btm_nav_title">Bottom Navigation</string>
+    <string name="location_permission_failed_text">Weather could not be detected on your current location due to permission issue</string>
+
+</resources>

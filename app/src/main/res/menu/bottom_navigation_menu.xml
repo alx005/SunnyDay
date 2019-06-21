@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/bottomNavFragmentSearch"
+        android:icon="@drawable/search"
+        android:title="@string/search"/>
+    <item
+        android:id="@+id/bottomNavFragmentHome"
+        android:icon="@drawable/location_v"
+        android:title="@string/home"/>
+    <item
+        android:id="@+id/bottomNavFragmentSettings"
+        android:icon="@drawable/settings"
+        android:title="@string/settings"/>
+
+</menu>
