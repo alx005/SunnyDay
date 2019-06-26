@@ -7,17 +7,17 @@
 
     <fragment
         android:id="@+id/bottomNavFragmentHome"
-        android:name="com.google.sunnyday.Home"
+        android:name="com.google.sunnyday.HomeFragment"
         tools:layout="@layout/fragment_home"/>
 
     <fragment
         android:id="@+id/bottomNavFragmentSearch"
-        android:name="com.google.sunnyday.Search"
+        android:name="com.google.sunnyday.SearchFragment"
         tools:layout="@layout/fragment_search"/>
 
     <fragment
         android:id="@+id/bottomNavFragmentSettings"
-        android:name="com.google.sunnyday.Settings"
+        android:name="com.google.sunnyday.SettingsFragment"
         tools:layout="@layout/fragment_settings"/>
 
 </navigation>

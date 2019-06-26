@@ -3,13 +3,15 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
-
+        <variable
+            name="weatherViewModel"
+            type="com.google.sunnyday.service.model.Weather" />
     </data>
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".Home">
+        tools:context=".HomeFragment">
 
 
     </RelativeLayout>
