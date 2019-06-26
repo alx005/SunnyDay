@@ -126,15 +126,15 @@ public class HomeFragment extends Fragment {
             Log.d(TAG,"onLocationChanged");
             WeatherService service = RetrofitClientInstance.getRetrofitInstance().create(WeatherService.class);
             String appid = "e324535fa70cc7197fbc91fa6dcb573c";
-
-            Call<Weather> call = service.getCurrentWeather(Double.toString(location.getLatitude()), Double.toString(location.getLongitude()), appid);
+            String units = "metric";
+            Call<Weather> call = service.getCurrentWeather(Double.toString(location.getLatitude()), Double.toString(location.getLongitude()), appid, units);
             call.enqueue(new Callback<Weather>() {
                 @Override
                 public void onResponse(Call<Weather> call, Response<Weather> response) {
                     Weather weather = response.body();
                     ArrayList<Weather.WeatherObject> weatherObject = weather.getWeatherList();
                     Weather.WeatherObject currentWeather = weatherObject.get(0);
-                    Log.d(TAG, currentWeather.getWeather_description());
+                    Log.d(TAG, currentWeather.weather_description());
                 }
 
                 @Override

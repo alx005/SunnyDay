@@ -65,18 +65,20 @@ public class Weather {
         return weatherList;
     }
 
-
     public class WeatherObject {
         @SerializedName("description")
         private String weather_description;
 
-        public void setWeather_description(java.lang.String weather_description) {
-            this.weather_description = weather_description;
-        }
-
-        public String getWeather_description (){
+        public String weather_description (){
             return weather_description;
         }
+
+        @SerializedName("main")
+        private String weather_title;
+        public String weather_title (){
+            return weather_title;
+        }
+
     }
 
 }

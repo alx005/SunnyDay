@@ -13,9 +13,7 @@ import retrofit2.http.Query;
 public interface WeatherService {
     String HTTPS_API_WEATHER_URL = "https://api.openweathermap.org/data/2.5/";
 
-    //api.openweathermap.org/data/2.5/weather?lat=35&lon=139
     @GET("weather")
-    Call<Weather> getCurrentWeather(@Query("lat") String lat, @Query("lon") String lon, @Query("appid") String appid);
+    Call<Weather> getCurrentWeather(@Query("lat") String lat, @Query("lon") String lon, @Query("appid") String appid, @Query("units") String units);
 
-//    api.openweathermap.org/data/2.5/
 }
