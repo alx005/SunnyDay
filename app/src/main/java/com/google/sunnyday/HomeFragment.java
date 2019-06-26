@@ -2,12 +2,10 @@ package com.google.sunnyday;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
-import android.content.Context;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
-import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -15,9 +13,9 @@ import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
-import androidx.navigation.NavController;
-import androidx.navigation.Navigation;
-import androidx.navigation.ui.NavigationUI;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.lifecycle.ViewModelProviders;
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -25,18 +23,36 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.gson.JsonElement;
+import com.google.sunnyday.service.model.Weather;
+import com.google.sunnyday.service.repository.RetrofitClientInstance;
+import com.google.sunnyday.service.repository.WeatherService;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.inject.Inject;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 import static android.content.Context.LOCATION_SERVICE;
 
 //Get current location
-public class Home extends Fragment {
+public class HomeFragment extends Fragment {
 
     private static final int ACCESS_FINE_LOCATION_R_CODE = 1001;
     private LocationManager mLocationManager;
     private long LOCATION_REFRESH_TIME = 60;
     private float LOCATION_REFRESH_DISTANCE = 60;
     private final String TAG = "Alex_HOME";
+
+    private static final String KEY_PROJECT_ID = "project_id";
+
+    @Inject
+    ViewModelProvider.Factory viewModelFactory;
+
 
     @Nullable
     @Override
@@ -63,6 +79,12 @@ public class Home extends Fragment {
             getCurrentLocation();
         }
 
+
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
 
     }
 
@@ -102,6 +124,24 @@ public class Home extends Fragment {
         public void onLocationChanged(final Location location) {
             //your code here
             Log.d(TAG,"onLocationChanged");
+            WeatherService service = RetrofitClientInstance.getRetrofitInstance().create(WeatherService.class);
+            String appid = "e324535fa70cc7197fbc91fa6dcb573c";
+
+            Call<Weather> call = service.getCurrentWeather(Double.toString(location.getLatitude()), Double.toString(location.getLongitude()), appid);
+            call.enqueue(new Callback<Weather>() {
+                @Override
+                public void onResponse(Call<Weather> call, Response<Weather> response) {
+                    Weather weather = response.body();
+                    ArrayList<Weather.WeatherObject> weatherObject = weather.getWeatherList();
+                    Weather.WeatherObject currentWeather = weatherObject.get(0);
+                    Log.d(TAG, currentWeather.getWeather_description());
+                }
+
+                @Override
+                public void onFailure(Call<Weather> call, Throwable t) {
+
+                }
+            });
         }
 
         @Override
