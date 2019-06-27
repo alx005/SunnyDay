@@ -1,10 +1,13 @@
 package com.google.sunnyday.service.model;
 
+import android.graphics.drawable.Drawable;
+
 import com.google.gson.annotations.SerializedName;
 
 import java.util.ArrayList;
 
 public class Weather {
+
 
 
 //    {
@@ -16,7 +19,7 @@ public class Weather {
 //        {
 //            "id": 801,
 //                "main": "Clouds",
-//                "description": "few clouds",
+//                "description": "clouds",
 //                "icon": "02n"
 //        }
 //  ],
@@ -64,6 +67,7 @@ public class Weather {
     public ArrayList<WeatherObject> getWeatherList() {
         return weatherList;
     }
+
 
     public class WeatherObject {
         @SerializedName("description")

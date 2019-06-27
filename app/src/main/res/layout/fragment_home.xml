@@ -6,7 +6,7 @@
     <data>
         <variable
             name="weatherViewModel"
-            type="com.google.sunnyday.service.model.Weather" />
+            type="com.google.sunnyday.viewmodel.WeatherViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -17,14 +17,15 @@
 
         <ImageView
             android:id="@+id/imageView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="150dp"
+            android:layout_height="150dp"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
+            app:load_image="@{weatherViewModel.weather.getWeatherList().get(0).weather_description()}"
             tools:srcCompat="@tools:sample/avatars" />
 
         <TextView
@@ -34,7 +35,7 @@
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
-            android:text="Current Weather"
+            android:text="@{weatherViewModel.weather.getWeatherList().get(0).weather_description()}"
             android:textSize="36sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

@@ -12,6 +12,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
@@ -24,6 +25,7 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.google.gson.JsonElement;
+import com.google.sunnyday.databinding.FragmentHomeBinding;
 import com.google.sunnyday.service.model.Weather;
 import com.google.sunnyday.service.repository.RetrofitClientInstance;
 import com.google.sunnyday.service.repository.WeatherService;
@@ -47,9 +49,9 @@ public class HomeFragment extends Fragment {
     private LocationManager mLocationManager;
     private long LOCATION_REFRESH_TIME = 60;
     private float LOCATION_REFRESH_DISTANCE = 60;
-    private final String TAG = "Alex_HOME";
+    private final String TAG = HomeFragment.class.getSimpleName();
 
-    private static final String KEY_PROJECT_ID = "project_id";
+    private FragmentHomeBinding binding;
 
     @Inject
     ViewModelProvider.Factory viewModelFactory;
@@ -58,7 +60,8 @@ public class HomeFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_home, container, false);
+        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_home, container, false);
+        return binding.getRoot();
     }
 
     @Override
@@ -112,6 +115,8 @@ public class HomeFragment extends Fragment {
         }
     }
 
+
+
     //LOCATION
     @SuppressLint("MissingPermission")
     private void getCurrentLocation() {
@@ -126,13 +131,11 @@ public class HomeFragment extends Fragment {
             //your code here
             Log.d(TAG,"onLocationChanged");
 
-
-            String appid = "e324535fa70cc7197fbc91fa6dcb573c";
-            String units = "metric";
             String lat = Double.toString(location.getLatitude()), lon = Double.toString(location.getLongitude());
 
             final WeatherViewModel viewModel = ViewModelProviders.of(HomeFragment.this).get(WeatherViewModel.class);
-            viewModel.setViewModelParams(lat, lon, appid, units);
+            binding.setWeatherViewModel(viewModel);
+            viewModel.setViewModelParams(lat, lon, getActivity().getString(R.string.appid), getActivity().getString(R.string.units_metric));
             viewModel.getWeatherObservable().observe(HomeFragment.this, new Observer<Weather>() {
                 @Override
                 public void onChanged(Weather weather) {
@@ -140,6 +143,8 @@ public class HomeFragment extends Fragment {
                         Log.e(TAG, "null weather");
                         weather = null;
                     } else {
+                        viewModel.setWeather(weather);
+
                         ArrayList<Weather.WeatherObject> weatherObject = weather.getWeatherList();
                         Weather.WeatherObject currentWeather = weatherObject.get(0);
                         Log.d(TAG, "CURRENT WEATHER " + currentWeather.weather_description());
