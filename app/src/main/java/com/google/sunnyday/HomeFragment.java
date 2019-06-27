@@ -27,6 +27,7 @@ import com.google.gson.JsonElement;
 import com.google.sunnyday.service.model.Weather;
 import com.google.sunnyday.service.repository.RetrofitClientInstance;
 import com.google.sunnyday.service.repository.WeatherService;
+import com.google.sunnyday.viewmodel.WeatherViewModel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -124,24 +125,45 @@ public class HomeFragment extends Fragment {
         public void onLocationChanged(final Location location) {
             //your code here
             Log.d(TAG,"onLocationChanged");
-            WeatherService service = RetrofitClientInstance.getRetrofitInstance().create(WeatherService.class);
+
+
             String appid = "e324535fa70cc7197fbc91fa6dcb573c";
             String units = "metric";
-            Call<Weather> call = service.getCurrentWeather(Double.toString(location.getLatitude()), Double.toString(location.getLongitude()), appid, units);
-            call.enqueue(new Callback<Weather>() {
-                @Override
-                public void onResponse(Call<Weather> call, Response<Weather> response) {
-                    Weather weather = response.body();
-                    ArrayList<Weather.WeatherObject> weatherObject = weather.getWeatherList();
-                    Weather.WeatherObject currentWeather = weatherObject.get(0);
-                    Log.d(TAG, currentWeather.weather_description());
-                }
+            String lat = Double.toString(location.getLatitude()), lon = Double.toString(location.getLongitude());
 
+            final WeatherViewModel viewModel = ViewModelProviders.of(HomeFragment.this).get(WeatherViewModel.class);
+            viewModel.setViewModelParams(lat, lon, appid, units);
+            viewModel.getWeatherObservable().observe(HomeFragment.this, new Observer<Weather>() {
                 @Override
-                public void onFailure(Call<Weather> call, Throwable t) {
+                public void onChanged(Weather weather) {
+                    if (weather == null){
+                        Log.e(TAG, "null weather");
+                        weather = null;
+                    } else {
+                        ArrayList<Weather.WeatherObject> weatherObject = weather.getWeatherList();
+                        Weather.WeatherObject currentWeather = weatherObject.get(0);
+                        Log.d(TAG, "CURRENT WEATHER " + currentWeather.weather_description());
+                    }
 
                 }
             });
+
+
+//            Call<Weather> call = service.getCurrentWeather(Double.toString(location.getLatitude()), Double.toString(location.getLongitude()), appid, units);
+//            call.enqueue(new Callback<Weather>() {
+//                @Override
+//                public void onResponse(Call<Weather> call, Response<Weather> response) {
+//                    Weather weather = response.body();
+//                    ArrayList<Weather.WeatherObject> weatherObject = weather.getWeatherList();
+//                    Weather.WeatherObject currentWeather = weatherObject.get(0);
+//                    Log.d(TAG, currentWeather.weather_description());
+//                }
+//
+//                @Override
+//                public void onFailure(Call<Weather> call, Throwable t) {
+//
+//                }
+//            });
         }
 
         @Override
