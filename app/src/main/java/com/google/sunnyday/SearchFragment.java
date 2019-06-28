@@ -12,7 +12,10 @@ import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.NavigationUI;
 
+import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -21,7 +24,7 @@ import com.google.sunnyday.databinding.FragmentSearchBinding;
 
 
 public class SearchFragment extends Fragment {
-
+    private final String TAG = SearchFragment.class.getSimpleName();
     private FragmentSearchBinding binding;
 
     @Nullable
@@ -31,6 +34,18 @@ public class SearchFragment extends Fragment {
         return binding.getRoot();
     }
 
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
+    }
 
+    @Override
+    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
+        inflater.inflate(R.menu.search_menu, menu);
+        super.onCreateOptionsMenu(menu,inflater);
 
+        Log.i(TAG, "onCreateOptionsMenu");
+
+    }
 }
