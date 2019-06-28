@@ -136,22 +136,22 @@ public class HomeFragment extends Fragment {
             final WeatherViewModel viewModel = ViewModelProviders.of(HomeFragment.this).get(WeatherViewModel.class);
             binding.setWeatherViewModel(viewModel);
             viewModel.setViewModelParams(lat, lon, getActivity().getString(R.string.appid), getActivity().getString(R.string.units_metric));
-            viewModel.getWeatherObservable().observe(HomeFragment.this, new Observer<Weather>() {
-                @Override
-                public void onChanged(Weather weather) {
-                    if (weather == null){
-                        Log.e(TAG, "null weather");
-                        weather = null;
-                    } else {
-                        viewModel.setWeather(weather);
-
-                        ArrayList<Weather.WeatherObject> weatherObject = weather.getWeatherList();
-                        Weather.WeatherObject currentWeather = weatherObject.get(0);
-                        Log.d(TAG, "CURRENT WEATHER " + currentWeather.weather_description());
-                    }
-
-                }
-            });
+//            viewModel.getWeatherObservable().observe(HomeFragment.this, new Observer<Weather>() {
+//                @Override
+//                public void onChanged(Weather weather) {
+//                    if (weather == null){
+//                        Log.e(TAG, "null weather");
+//                        weather = null;
+//                    } else {
+//                        viewModel.setWeather(weather);
+//
+//                        ArrayList<Weather.WeatherObject> weatherObject = weather.getWeatherList();
+//                        Weather.WeatherObject currentWeather = weatherObject.get(0);
+//                        Log.d(TAG, "CURRENT WEATHER " + currentWeather.weather_description());
+//                    }
+//
+//                }
+//            });
 
 
 //            Call<Weather> call = service.getCurrentWeather(Double.toString(location.getLatitude()), Double.toString(location.getLongitude()), appid, units);
