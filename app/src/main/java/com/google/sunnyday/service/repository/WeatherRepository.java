@@ -7,12 +7,6 @@ import androidx.lifecycle.MutableLiveData;
 
 import com.google.sunnyday.service.model.Weather;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.inject.Inject;
-import javax.inject.Singleton;
-
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;

@@ -31,15 +31,6 @@ import com.google.sunnyday.service.repository.RetrofitClientInstance;
 import com.google.sunnyday.service.repository.WeatherService;
 import com.google.sunnyday.viewmodel.WeatherViewModel;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.inject.Inject;
-
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
-
 import static android.content.Context.LOCATION_SERVICE;
 
 //Get current location
@@ -52,9 +43,6 @@ public class HomeFragment extends Fragment {
     private final String TAG = HomeFragment.class.getSimpleName();
 
     private FragmentHomeBinding binding;
-
-    @Inject
-    ViewModelProvider.Factory viewModelFactory;
 
 
     @Nullable
