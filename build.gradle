@@ -22,6 +22,8 @@ buildscript {
         dagger_version = "2.15"
         arch = "2.0.0"
         retrofit = "2.0.2"
+        roomVersion = '2.1.0-alpha04'
+        archLifecycleVersion = '2.0.0'
 
     }
 }

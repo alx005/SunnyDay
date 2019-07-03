@@ -68,4 +68,17 @@ dependencies {
     //gson
     implementation 'com.google.code.gson:gson:2.8.5'
 
+    //recyclerView
+    implementation 'com.android.support:recyclerview-v7:28.0.0'
+
+    //worker
+    implementation "androidx.work:work-runtime:2.0.1"
+
+    // Dependencies for working with Architecture components
+    // You'll probably have to update the version numbers in guild.gradle (Project)
+    implementation "androidx.room:room-runtime:$rootProject.roomVersion"
+    annotationProcessor "androidx.room:room-compiler:$rootProject.roomVersion"
+    androidTestImplementation "androidx.room:room-testing:$rootProject.roomVersion"
+    implementation 'androidx.recyclerview:recyclerview:1.0.0'
+
 }

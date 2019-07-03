@@ -17,6 +17,8 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -24,12 +26,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import com.google.gson.JsonElement;
 import com.google.sunnyday.databinding.FragmentHomeBinding;
+import com.google.sunnyday.databinding.WeatherLayoutBinding;
 import com.google.sunnyday.service.model.Weather;
-import com.google.sunnyday.service.repository.RetrofitClientInstance;
-import com.google.sunnyday.service.repository.WeatherService;
 import com.google.sunnyday.viewmodel.WeatherViewModel;
+
+import java.util.ArrayList;
 
 import static android.content.Context.LOCATION_SERVICE;
 
@@ -44,12 +46,48 @@ public class HomeFragment extends Fragment {
 
     private FragmentHomeBinding binding;
 
+    private RecyclerViewWeatherAdapter adapter;
+    private RecyclerView recyclerView;
+    private WeatherLayoutBinding weatherLayoutBinding;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_home, container, false);
-        return binding.getRoot();
+        View view = binding.getRoot();
+
+        recyclerView = binding.weatherRv;
+        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), RecyclerView.VERTICAL, false));
+
+//        items = new ArrayList<>();
+//
+//        items.add(new MainItem(10, "Les Hiers"));
+//        items.add(new MainItem(5, "Zakuro"));
+
+
+
+        adapter = new RecyclerViewWeatherAdapter(new ArrayList<>());
+        recyclerView.setAdapter(adapter);
+
+
+//        weatherLayoutBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_home, container, false);
+//        weatherLayoutBinding.weatherRv.
+//        weatherLayoutBinding.flightsRv.setLayoutManager(new LinearLayoutManager(this));
+//        weatherLayoutBinding.flightsRv.addItemDecoration(
+//                new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
+//
+//        FlightsRecyclerViewAdapter adapter =
+//                new FlightsRecyclerViewAdapter(prepareData(), this);
+//        weatherLayoutBinding.flightsRv.setAdapter(adapter);
+
+
+        return view;
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
     }
 
     @Override
@@ -60,7 +98,6 @@ public class HomeFragment extends Fragment {
 
         if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED) {
-            // Permission is not granted
             Log.d(TAG,"requesting permission");
 
             ActivityCompat.requestPermissions(getActivity(),
@@ -86,20 +123,14 @@ public class HomeFragment extends Fragment {
                                            String[] permissions, int[] grantResults) {
         switch (requestCode) {
             case ACCESS_FINE_LOCATION_R_CODE: {
-                // If request is cancelled, the result arrays are empty.
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    // permission was granted, yay! Do the
-                    // contacts-related task you need to do.
                     getCurrentLocation();
                 } else {
                     Toast.makeText(getContext(), R.string.location_permission_failed_text, Toast.LENGTH_SHORT);
                 }
                 return;
             }
-
-            // other 'case' lines to check for other
-            // permissions this app might request.
         }
     }
 
@@ -116,30 +147,32 @@ public class HomeFragment extends Fragment {
     private final LocationListener mLocationListener = new LocationListener() {
         @Override
         public void onLocationChanged(final Location location) {
-            //your code here
             Log.d(TAG,"onLocationChanged");
-
             String lat = Double.toString(location.getLatitude()), lon = Double.toString(location.getLongitude());
 
             final WeatherViewModel viewModel = ViewModelProviders.of(HomeFragment.this).get(WeatherViewModel.class);
             binding.setWeatherViewModel(viewModel);
-            viewModel.setViewModelParams(lat, lon, getActivity().getString(R.string.appid), getActivity().getString(R.string.units_metric));
-//            viewModel.getWeatherObservable().observe(HomeFragment.this, new Observer<Weather>() {
-//                @Override
-//                public void onChanged(Weather weather) {
-//                    if (weather == null){
-//                        Log.e(TAG, "null weather");
-//                        weather = null;
-//                    } else {
-//                        viewModel.setWeather(weather);
-//
-//                        ArrayList<Weather.WeatherObject> weatherObject = weather.getWeatherList();
-//                        Weather.WeatherObject currentWeather = weatherObject.get(0);
-//                        Log.d(TAG, "CURRENT WEATHER " + currentWeather.weather_description());
-//                    }
-//
-//                }
-//            });
+            viewModel.setViewModelParams(lat, lon);
+            viewModel.getWeatherObservable().observe(HomeFragment.this, new Observer<Weather>() {
+                @Override
+                public void onChanged(Weather weather) {
+                    if (weather == null || adapter == null){
+                        Log.e(TAG, "null weather");
+                        weather = null;
+                    } else {
+                        viewModel.setWeather(weather);
+
+                        adapter.forecasts = weather.getForecasts();
+                        adapter.notifyDataSetChanged();
+
+                        for (int i = 0; i < weather.getForecasts().size(); i++) {
+                            Weather.Forecasts forecasts= weather.getForecasts().get(i);
+                            Log.d(TAG,"Weathers : "+forecasts.getWeatherList().get(0).weather_description());
+                        }
+                    }
+
+                }
+            });
 
 
 //            Call<Weather> call = service.getCurrentWeather(Double.toString(location.getLatitude()), Double.toString(location.getLongitude()), appid, units);

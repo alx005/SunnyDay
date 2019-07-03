@@ -21,7 +21,8 @@ public class WeatherViewModel extends AndroidViewModel {
     private LiveData<Weather> weatherObservable = new LiveData<Weather>() {
     };
 
-    private final MutableLiveData<String> lat,lon,appid,units;
+
+    private final MutableLiveData<String> lat,lon;
     private static String TAG = WeatherViewModel.class.getSimpleName();
 
     public ObservableField<Weather> weather = new ObservableField<Weather>();
@@ -31,14 +32,12 @@ public class WeatherViewModel extends AndroidViewModel {
 
         this.lat = new MutableLiveData<>();
         this.lon = new MutableLiveData<>();
-        this.appid = new MutableLiveData<>();
-        this.units = new MutableLiveData<>();
 
     }
 
     public LiveData<Weather> getWeatherObservable() {
         WeatherRepository weatherRepository = WeatherRepository.getInstance();
-        weatherObservable = weatherRepository.getCurrentWeather(lat.getValue(), lon.getValue(), appid.getValue(), units.getValue());
+        weatherObservable = weatherRepository.getWeatherForecast(lat.getValue(), lon.getValue());
         return weatherObservable;
     }
     public void setWeather(Weather weather) {
@@ -46,11 +45,9 @@ public class WeatherViewModel extends AndroidViewModel {
     }
 
 
-    public void setViewModelParams(String lat, String lon, String appid, String units){
+    public void setViewModelParams(String lat, String lon){
         this.lat.setValue(lat);
         this.lon.setValue(lon);
-        this.appid.setValue(appid);
-        this.units.setValue(units);
     }
 
     public void lat(String lat) {
@@ -61,13 +58,6 @@ public class WeatherViewModel extends AndroidViewModel {
         this.lon.setValue(lon);
     }
 
-    public void appid(String appid) {
-        this.appid.setValue(appid);
-    }
-
-    public void units(String units) {
-        this.units.setValue(units);
-    }
 
     @BindingAdapter({"load_image"})
     public static void setImageViewResource(ImageView view, String resource) {
