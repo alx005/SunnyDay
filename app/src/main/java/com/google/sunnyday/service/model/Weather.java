@@ -23,6 +23,12 @@ public class Weather {
     }
 
     public class Forecasts {
+        @SerializedName("dt")
+        private String timestamp;
+        public String getTimestamp() {
+            return timestamp;
+        }
+
         @SerializedName("weather")
         private ArrayList<WeatherObject> weatherList;
 
@@ -37,7 +43,6 @@ public class Weather {
         public class WeatherObject {
             @SerializedName("description")
             private String weather_description;
-
             public String weather_description (){
                 return weather_description;
             }

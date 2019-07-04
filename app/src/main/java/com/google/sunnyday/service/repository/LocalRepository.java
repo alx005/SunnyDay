@@ -8,12 +8,6 @@ import android.os.AsyncTask;
 import android.util.Log;
 
 import androidx.lifecycle.LiveData;
-import androidx.room.OnConflictStrategy;
-import androidx.room.Room;
-import androidx.room.RoomDatabase;
-import androidx.sqlite.db.SupportSQLiteDatabase;
-
-import com.google.sunnyday.R;
 import com.google.sunnyday.service.model.City;
 
 import java.util.List;

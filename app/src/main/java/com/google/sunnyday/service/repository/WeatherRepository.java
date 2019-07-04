@@ -17,7 +17,7 @@ public class WeatherRepository {
     private static volatile WeatherRepository sSoleInstance = new WeatherRepository();
     private static String appid = "e324535fa70cc7197fbc91fa6dcb573c";
     private static String units = "metric";
-    private static String limitResults = "5";
+    private static String limitResults = "15";
     //private constructor.
     private WeatherRepository(){}
 

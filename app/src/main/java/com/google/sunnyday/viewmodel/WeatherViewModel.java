@@ -3,6 +3,7 @@ package com.google.sunnyday.viewmodel;
 import android.app.Application;
 import android.util.Log;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.databinding.BindingAdapter;
@@ -16,6 +17,11 @@ import com.google.sunnyday.R;
 import com.google.sunnyday.service.model.Weather;
 import com.google.sunnyday.service.repository.WeatherRepository;
 import com.google.sunnyday.utils.Utils;
+
+import org.w3c.dom.Text;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import okhttp3.internal.Util;
 
@@ -88,8 +94,13 @@ public class WeatherViewModel extends AndroidViewModel {
                     .into(view);
         }
 
+    }
 
-
-
+    @BindingAdapter({"set_text"})
+    public static void setStringDate(TextView view, String resource) {
+        Log.d(TAG, "date :"+resource);
+        Date updatedate = new Date(Long.valueOf(resource) * 1000);
+        SimpleDateFormat format = new SimpleDateFormat("h:mm a EEE, MMM d");
+        view.setText(format.format(updatedate));
     }
 }
