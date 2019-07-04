@@ -33,12 +33,8 @@ public class RecyclerViewWeatherHolder extends RecyclerView.ViewHolder {
             Log.d(TAG,"null");
             return null;
         }
-        Log.d(TAG,"parent"+parent.toString());
-        Log.d(TAG,"RecyclerViewWeatherHolder onCreateViewHolder");
         LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());
-        Log.d(TAG,"RecyclerViewWeatherHolder onCreateViewHolder1");
         WeatherLayoutBinding itemBinding = WeatherLayoutBinding.inflate(layoutInflater, parent, false);
-        Log.d(TAG,"RecyclerViewWeatherHolder onCreateViewHolder2");
         return new RecyclerViewWeatherHolder(itemBinding);
     }
 

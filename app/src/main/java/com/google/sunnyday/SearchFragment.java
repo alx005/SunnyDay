@@ -28,8 +28,9 @@ import com.google.gson.JsonParser;
 import com.google.gson.reflect.TypeToken;
 import com.google.sunnyday.databinding.FragmentSearchBinding;
 import com.google.sunnyday.service.model.City;
-import com.google.sunnyday.service.repository.LocalRepository;
+import com.google.sunnyday.service.model.Weather;
 import com.google.sunnyday.viewmodel.CityViewModel;
+import com.google.sunnyday.viewmodel.WeatherViewModel;
 
 import java.lang.reflect.Type;
 import java.nio.file.Path;
@@ -44,13 +45,23 @@ public class SearchFragment extends Fragment {
     private CityViewModel cViewModel;
     private ArrayList<City> cities = new ArrayList<>();
     private ListView listView;
+    private RecyclerViewWeatherAdapter adapter;
+    private RecyclerView recyclerView;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         Log.i(TAG, "onCreateView");
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_search, container, false);
-        return binding.getRoot();
+        View view = binding.getRoot();
+
+        recyclerView = binding.searchRv;
+        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), RecyclerView.VERTICAL, false));
+
+        adapter = new RecyclerViewWeatherAdapter(new ArrayList<>());
+        recyclerView.setAdapter(adapter);
+
+        return view;
     }
 
     @Override
@@ -69,39 +80,34 @@ public class SearchFragment extends Fragment {
         Log.i(TAG, "onCreateOptionsMenu");
 
         // Get the ViewModel
-        cViewModel = ViewModelProviders.of(SearchFragment.this).get(CityViewModel.class);
-
-
-        City city = new City("Alexis");
-
-
-        cViewModel.getAllCity().observe(this, new Observer<List<City>>() {
-            @Override
-            public void onChanged(List<City> cities) {
-
-                for (int i = 0; i < cities.size(); i++){
-                    City retrievedcity = cities.get(i);
-                    Log.d(TAG, "Alexis CITY: " + retrievedcity.get_id());
-                    Log.d(TAG, "Alexis CITY: " + retrievedcity.getName());
-                }
-            }
-        });
-
-        Log.d(TAG, "adding city"+ city.toString());
-        cViewModel.insert(city);
-
-
-
+//        cViewModel = ViewModelProviders.of(SearchFragment.this).get(CityViewModel.class);
+//
+//        City city = new City("Alexis");
+//
+//        cViewModel.getAllCity().observe(this, new Observer<List<City>>() {
+//            @Override
+//            public void onChanged(List<City> cities) {
+//
+//                for (int i = 0; i < cities.size(); i++){
+//                    City retrievedcity = cities.get(i);
+//                    Log.d(TAG, "Alexis CITY: " + retrievedcity.get_id());
+//                    Log.d(TAG, "Alexis CITY: " + retrievedcity.getName());
+//                }
+//            }
+//        });
+//
+//        Log.d(TAG, "adding city"+ city.toString());
+//        cViewModel.insert(city);
+//
+//
         //Load JSON
 //        String mJsonString = loadJSONFromAsset(getContext());
 //        createRecyclerView(cities);
 
         // Associate searchable configuration with the SearchView
         SearchManager searchManager = (SearchManager) getActivity().getSystemService(Context.SEARCH_SERVICE);
-
         searchView = (androidx.appcompat.widget.SearchView) menu.findItem(R.id.app_bar_search)
                 .getActionView();
-
         searchView.setSearchableInfo(searchManager
                 .getSearchableInfo(getActivity().getComponentName()));
         searchView.setMaxWidth(Integer.MAX_VALUE);
@@ -110,7 +116,12 @@ public class SearchFragment extends Fragment {
         searchView.setOnQueryTextListener(new androidx.appcompat.widget.SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                Log.d(TAG, "onQueryTextSubmit");
+                Log.d(TAG, "onQueryTextSubmit: "+query);
+                //get weather
+                if (query != null && query.length() > 0) {
+                    getWeatherWithCityName(query);
+                }
+
                 return false;
             }
 
@@ -118,7 +129,7 @@ public class SearchFragment extends Fragment {
             public boolean onQueryTextChange(String query) {
                 Log.d(TAG, "onQueryTextChange: "+ query);
 
-
+                //add suggestions
                 return false;
             }
         });
@@ -136,22 +147,39 @@ public class SearchFragment extends Fragment {
      * Shows and hides views for when the Activity is done processing an image
      */
     private void showWorkFinished(String JSONString) {
-        Log.d(TAG, "showWorkFinished");
-        JsonParser parser = new JsonParser();
-        JsonElement mJson =  parser.parse(JSONString);
-        Gson gson = new Gson();
-
-        Type collectionType = new TypeToken<Collection<City>>(){}.getType();
-        cities = gson.fromJson(mJson, collectionType);
+//        Log.d(TAG, "showWorkFinished");
+//        JsonParser parser = new JsonParser();
+//        JsonElement mJson =  parser.parse(JSONString);
+//        Gson gson = new Gson();
+//
+//        Type collectionType = new TypeToken<Collection<City>>(){}.getType();
+//        cities = gson.fromJson(mJson, collectionType);
     }
 
-    private void createRecyclerView (ArrayList<City> cities) {
+    private void getWeatherWithCityName(String cityname) {
 
-        RecyclerView rView = getActivity().findViewById(R.id.recycler_view);
-        RecyclerViewAdapter adapter = new RecyclerViewAdapter(getContext(), cities);
-        rView.setAdapter(adapter);
-        rView.setLayoutManager(new LinearLayoutManager(getContext()));
+        final WeatherViewModel viewModel = ViewModelProviders.of(SearchFragment.this).get(WeatherViewModel.class);
+        viewModel.setViewModelParams(cityname, null,null);
+        viewModel.getWeatherObservable().observe(SearchFragment.this, new Observer<Weather>() {
+            @Override
+            public void onChanged(Weather weather) {
+                if (weather == null || adapter == null){
+                    Log.e(TAG, "null weather");
+                    weather = null;
+                } else {
+                    viewModel.setWeather(weather);
 
+                    adapter.forecasts = weather.getForecasts();
+                    adapter.notifyDataSetChanged();
+
+                    for (int i = 0; i < weather.getForecasts().size(); i++) {
+                        Weather.Forecasts forecasts = weather.getForecasts().get(i);
+                        Log.d(TAG,"Weathers : "+forecasts.getWeatherList().get(0).weather_description());
+                    }
+                }
+
+            }
+        });
     }
 
 }

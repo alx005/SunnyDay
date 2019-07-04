@@ -1,21 +1,13 @@
 package com.google.sunnyday.viewmodel;
 
 import android.app.Application;
-import android.util.Log;
 
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
-import androidx.lifecycle.ViewModel;
-import androidx.work.ExistingWorkPolicy;
-import androidx.work.OneTimeWorkRequest;
-import androidx.work.WorkContinuation;
-import androidx.work.WorkInfo;
 import androidx.work.WorkManager;
 
 import java.util.List;
 
-import com.google.sunnyday.Constants;
-import com.google.sunnyday.JSONWorker;
 import com.google.sunnyday.service.model.City;
 import com.google.sunnyday.service.repository.LocalRepository;
 

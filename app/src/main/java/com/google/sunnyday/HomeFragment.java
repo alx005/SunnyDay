@@ -27,7 +27,6 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.google.sunnyday.databinding.FragmentHomeBinding;
-import com.google.sunnyday.databinding.WeatherLayoutBinding;
 import com.google.sunnyday.service.model.Weather;
 import com.google.sunnyday.viewmodel.WeatherViewModel;
 
@@ -48,38 +47,26 @@ public class HomeFragment extends Fragment {
 
     private RecyclerViewWeatherAdapter adapter;
     private RecyclerView recyclerView;
-    private WeatherLayoutBinding weatherLayoutBinding;
+
+//    public static HomeFragment newInstance() {
+//        Bundle args = new Bundle();
+//        HomeFragment fragment = new HomeFragment();
+//        fragment.setArguments(args);
+//        return fragment;
+//    }
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        Log.d(TAG, "onCreateView");
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_home, container, false);
         View view = binding.getRoot();
 
         recyclerView = binding.weatherRv;
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), RecyclerView.VERTICAL, false));
 
-//        items = new ArrayList<>();
-//
-//        items.add(new MainItem(10, "Les Hiers"));
-//        items.add(new MainItem(5, "Zakuro"));
-
-
-
         adapter = new RecyclerViewWeatherAdapter(new ArrayList<>());
         recyclerView.setAdapter(adapter);
-
-
-//        weatherLayoutBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_home, container, false);
-//        weatherLayoutBinding.weatherRv.
-//        weatherLayoutBinding.flightsRv.setLayoutManager(new LinearLayoutManager(this));
-//        weatherLayoutBinding.flightsRv.addItemDecoration(
-//                new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
-//
-//        FlightsRecyclerViewAdapter adapter =
-//                new FlightsRecyclerViewAdapter(prepareData(), this);
-//        weatherLayoutBinding.flightsRv.setAdapter(adapter);
-
 
         return view;
     }
@@ -87,34 +74,21 @@ public class HomeFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
+        Log.d(TAG, "onViewCreated");
     }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        mLocationManager = (LocationManager) getActivity().getSystemService(LOCATION_SERVICE);
-
-        if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED) {
-            Log.d(TAG,"requesting permission");
-
-            ActivityCompat.requestPermissions(getActivity(),
-                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-                    ACCESS_FINE_LOCATION_R_CODE);
-        } else  {
-            Log.d(TAG,"permission granted");
-            getCurrentLocation();
-        }
-
+        Log.d(TAG, "onCreate");
 
     }
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-
+        Log.d(TAG, "onActivityCreated");
+        verifyPermissions();
     }
 
     //PERMISSIONS
@@ -134,9 +108,51 @@ public class HomeFragment extends Fragment {
         }
     }
 
+    private void getWeatherWithLocation(Location location) {
+        String lat = Double.toString(location.getLatitude()), lon = Double.toString(location.getLongitude());
 
+        final WeatherViewModel viewModel = ViewModelProviders.of(HomeFragment.this).get(WeatherViewModel.class);
+        binding.setWeatherViewModel(viewModel);
+        viewModel.setViewModelParams(null, lat, lon);
+        viewModel.getWeatherObservable().observe(HomeFragment.this, new Observer<Weather>() {
+            @Override
+            public void onChanged(Weather weather) {
+                if (weather == null || adapter == null){
+                    Log.e(TAG, "null weather");
+                    weather = null;
+                } else {
+                    viewModel.setWeather(weather);
+
+                    adapter.forecasts = weather.getForecasts();
+                    adapter.notifyDataSetChanged();
+
+                    for (int i = 0; i < weather.getForecasts().size(); i++) {
+                        Weather.Forecasts forecasts = weather.getForecasts().get(i);
+                        Log.d(TAG,"Weathers : "+forecasts.getWeatherList().get(0).weather_description());
+                    }
+                }
+
+            }
+        });
+    }
 
     //LOCATION
+    private void verifyPermissions (){
+        mLocationManager = (LocationManager) getActivity().getSystemService(LOCATION_SERVICE);
+
+        if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
+            Log.d(TAG,"requesting permission");
+
+            ActivityCompat.requestPermissions(getActivity(),
+                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                    ACCESS_FINE_LOCATION_R_CODE);
+        } else  {
+            Log.d(TAG,"permission granted");
+            getCurrentLocation();
+        }
+    }
+
     @SuppressLint("MissingPermission")
     private void getCurrentLocation() {
         Log.d(TAG,"getCurrentLocation");
@@ -148,32 +164,7 @@ public class HomeFragment extends Fragment {
         @Override
         public void onLocationChanged(final Location location) {
             Log.d(TAG,"onLocationChanged");
-            String lat = Double.toString(location.getLatitude()), lon = Double.toString(location.getLongitude());
-
-            final WeatherViewModel viewModel = ViewModelProviders.of(HomeFragment.this).get(WeatherViewModel.class);
-            binding.setWeatherViewModel(viewModel);
-            viewModel.setViewModelParams(lat, lon);
-            viewModel.getWeatherObservable().observe(HomeFragment.this, new Observer<Weather>() {
-                @Override
-                public void onChanged(Weather weather) {
-                    if (weather == null || adapter == null){
-                        Log.e(TAG, "null weather");
-                        weather = null;
-                    } else {
-                        viewModel.setWeather(weather);
-
-                        adapter.forecasts = weather.getForecasts();
-                        adapter.notifyDataSetChanged();
-
-                        for (int i = 0; i < weather.getForecasts().size(); i++) {
-                            Weather.Forecasts forecasts= weather.getForecasts().get(i);
-                            Log.d(TAG,"Weathers : "+forecasts.getWeatherList().get(0).weather_description());
-                        }
-                    }
-
-                }
-            });
-
+            getWeatherWithLocation(location);
 
 //            Call<Weather> call = service.getCurrentWeather(Double.toString(location.getLatitude()), Double.toString(location.getLongitude()), appid, units);
 //            call.enqueue(new Callback<Weather>() {

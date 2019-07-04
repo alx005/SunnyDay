@@ -15,6 +15,9 @@ import com.bumptech.glide.Glide;
 import com.google.sunnyday.R;
 import com.google.sunnyday.service.model.Weather;
 import com.google.sunnyday.service.repository.WeatherRepository;
+import com.google.sunnyday.utils.Utils;
+
+import okhttp3.internal.Util;
 
 
 public class WeatherViewModel extends AndroidViewModel {
@@ -23,6 +26,7 @@ public class WeatherViewModel extends AndroidViewModel {
 
 
     private final MutableLiveData<String> lat,lon;
+    private final MutableLiveData<String> cityname;
     private static String TAG = WeatherViewModel.class.getSimpleName();
 
     public ObservableField<Weather> weather = new ObservableField<Weather>();
@@ -32,20 +36,23 @@ public class WeatherViewModel extends AndroidViewModel {
 
         this.lat = new MutableLiveData<>();
         this.lon = new MutableLiveData<>();
+        this.cityname = new MutableLiveData<>();
 
     }
 
     public LiveData<Weather> getWeatherObservable() {
         WeatherRepository weatherRepository = WeatherRepository.getInstance();
-        weatherObservable = weatherRepository.getWeatherForecast(lat.getValue(), lon.getValue());
+        weatherObservable = weatherRepository.getWeatherForecast(cityname.getValue(), lat.getValue(), lon.getValue());
         return weatherObservable;
     }
+
     public void setWeather(Weather weather) {
         this.weather.set(weather);
     }
 
 
-    public void setViewModelParams(String lat, String lon){
+    public void setViewModelParams(String cityname, String lat, String lon){
+        this.cityname.setValue(cityname);
         this.lat.setValue(lat);
         this.lon.setValue(lon);
     }
@@ -53,39 +60,18 @@ public class WeatherViewModel extends AndroidViewModel {
     public void lat(String lat) {
         this.lat.setValue(lat);
     }
-
     public void lon(String lon) {
         this.lon.setValue(lon);
     }
 
-
     @BindingAdapter({"load_image"})
     public static void setImageViewResource(ImageView view, String resource) {
-        String imageName = resource;
+        String imageName = "";
 
         if (resource == null) {
-
+            Log.d(TAG, "resource is null");
         } else {
-            switch (imageName) {
-                case "clear sky":
-                    imageName = "clear";
-                    break;
-                case "few clouds": case "scattered clouds":
-                    imageName = "clouds";
-                    break;
-                case "mist":
-                    break;
-                case "shower rain": case "broken clouds": case "rain": case "light rain":
-                    imageName = "rain";
-                    break;
-                case "snow":
-                    break;
-                case "thunderstorm":
-                    break;
-                default:
-                    imageName = "clear";
-
-            }
+            imageName = Utils.getImageForWeather(resource);
 
             if (view == null) {
                 Log.d(TAG, "view is null");

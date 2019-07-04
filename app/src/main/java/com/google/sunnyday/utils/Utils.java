@@ -1,9 +1,11 @@
-package com.google.sunnyday;
+package com.google.sunnyday.utils;
 
 import android.content.Context;
 import android.util.Log;
 
 import androidx.annotation.WorkerThread;
+
+import com.google.sunnyday.R;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -39,5 +41,33 @@ public final class Utils {
         }
         return json;
 
+    }
+
+    public static String getImageForWeather(String weather) {
+
+        String resourceName = weather;
+
+        switch (weather) {
+            case "clear sky":
+                resourceName = "clear";
+                break;
+            case "few clouds": case "scattered clouds":
+                resourceName = "clouds";
+                break;
+            case "mist":
+                break;
+            case "shower rain": case "broken clouds": case "rain": case "light rain":
+                resourceName = "rain";
+                break;
+            case "snow":
+                break;
+            case "thunderstorm":
+                break;
+            default:
+                resourceName = "clear";
+
+        }
+
+        return resourceName;
     }
 }

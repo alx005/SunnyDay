@@ -19,5 +19,6 @@ public interface WeatherService {
     @GET("forecast")
     Call<Weather> getWeatherForecastFromCoordinate(@Query("lat") String lat, @Query("lon") String lon, @Query("appid") String appid, @Query("units") String units, @Query("cnt") String cnt);
 
-
+    @GET("forecast")
+    Call<Weather> getWeatherForecastFromCity(@Query("q") String cityname, @Query("appid") String appid, @Query("units") String units, @Query("cnt") String cnt);
 }

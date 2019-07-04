@@ -47,13 +47,22 @@ public class WeatherRepository {
         return data;
     }
 
-    public LiveData<Weather> getWeatherForecast(String lat, String lon) {
+    public LiveData<Weather> getWeatherForecast(String cityname, String lat, String lon) {
+        return callWeatherService(cityname, lat, lon);
+    }
+
+    private MutableLiveData<Weather> callWeatherService(String cityname, String lat, String lon) {
         final MutableLiveData<Weather> data = new MutableLiveData<>();
-
         WeatherService service = RetrofitClientInstance.getRetrofitInstance().create(WeatherService.class);
+        Call<Weather> call;
 
-        Log.d(TAG, "getting weather for "+ lat + " " + lon);
-        Call<Weather> call = service.getWeatherForecastFromCoordinate(lat, lon, appid, units, limitResults);
+        if (cityname != null) {
+            Log.d(TAG, "getting weather for "+ cityname);
+            call = service.getWeatherForecastFromCity(cityname, appid, units, limitResults);
+        } else {
+            call = service.getWeatherForecastFromCoordinate(lat, lon, appid, units, limitResults);
+        }
+
         call.enqueue(new Callback<Weather>() {
             @Override
             public void onResponse(Call<Weather> call, Response<Weather> response) {

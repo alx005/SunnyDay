@@ -8,15 +8,8 @@ import androidx.work.Data;
 import androidx.work.Worker;
 import androidx.work.WorkerParameters;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonParser;
-import com.google.gson.reflect.TypeToken;
-import com.google.sunnyday.service.model.City;
-
-import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.Collection;
+import com.google.sunnyday.utils.Constants;
+import com.google.sunnyday.utils.Utils;
 
 public class JSONWorker extends Worker {
     private static final String TAG = JSONWorker.class.getSimpleName();

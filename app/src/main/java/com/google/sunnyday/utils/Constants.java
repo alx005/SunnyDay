@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.google.sunnyday;
+package com.google.sunnyday.utils;
 
 public final class Constants {
 

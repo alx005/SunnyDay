@@ -9,6 +9,9 @@ import android.os.Bundle;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationView;
+import com.google.sunnyday.utils.FragmentUtils;
+
+import static com.google.sunnyday.utils.FragmentUtils.TRANSITION_NONE;
 
 public class MainActivity extends AppCompatActivity {
 
