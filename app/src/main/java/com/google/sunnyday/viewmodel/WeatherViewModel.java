@@ -112,4 +112,9 @@ public class WeatherViewModel extends AndroidViewModel {
         Date updatedate = new Date(Long.valueOf(resource) * 1000);
         view.setText(Utils.getDateFromFormat(Constants.DATE_FORMAT_WITH_TIME, updatedate));
     }
+
+    @BindingAdapter({"camel_case_string"})
+    public static void setStringToCamelCase(TextView view, String resource) {
+        view.setText(Utils.camelCase(resource));
+    }
 }

@@ -185,7 +185,6 @@ public class SearchFragment extends Fragment {
 
         for (int i = 0; i < weather.getForecasts().size(); i++) {
             Weather.Forecasts forecasts = weather.getForecasts().get(i);
-            Log.d(TAG,"Weathers : "+forecasts.getWeatherList().get(0).weather_description());
         }
     }
 

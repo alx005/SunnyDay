@@ -35,7 +35,7 @@ public class Weather {
 
     public class Forecasts {
         @SerializedName("dt")
-        @ColumnInfo(name = "timestamp")
+        @Ignore
         private String timestamp;
         public String getTimestamp() {
             return timestamp;
@@ -44,6 +44,23 @@ public class Weather {
         @SerializedName("weather")
         @Ignore
         private ArrayList<WeatherObject> weatherList;
+
+        @SerializedName("main")
+        @Ignore
+        private Temperature temperature;
+
+        public Temperature getTemperature() {
+            return temperature;
+        }
+
+        public class Temperature {
+            @SerializedName("temp")
+            @Ignore
+            private String main_temp;
+            public String main_temp (){
+                return main_temp;
+            }
+        }
 
         public void setWeatherList(ArrayList<WeatherObject> weatherList) {
             this.weatherList = weatherList;

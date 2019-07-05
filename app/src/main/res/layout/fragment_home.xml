@@ -35,11 +35,12 @@
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
-            android:text="@{weatherViewModel.weather.getForecasts().get(0).getWeatherList().get(0).weather_description}"
             android:textSize="30dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/imageView" />
+            app:layout_constraintTop_toBottomOf="@+id/imageView"
+            app:camel_case_string="@{weatherViewModel.weather.getForecasts().get(0).getWeatherList().get(0).weather_description}"
+            />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/weatherRv"

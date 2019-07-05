@@ -3,6 +3,7 @@ package com.google.sunnyday.utils;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.text.TextUtils;
 import android.util.Log;
 
 import androidx.annotation.WorkerThread;
@@ -90,5 +91,12 @@ public final class Utils {
 
     public static String getDateToday() {
         return Utils.getDateFromFormat(Constants.DATE_FORMAT_M_D, java.sql.Date.valueOf(LocalDate.now().toString()));
+    }
+
+    public static String camelCase(String stringToConvert) {
+        if (TextUtils.isEmpty(stringToConvert))
+        {return "";}
+        return Character.toUpperCase(stringToConvert.charAt(0)) +
+                stringToConvert.substring(1).toLowerCase();
     }
 }
