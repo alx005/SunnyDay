@@ -13,17 +13,12 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.bumptech.glide.Glide;
-import com.google.sunnyday.R;
 import com.google.sunnyday.service.model.Weather;
 import com.google.sunnyday.service.repository.WeatherRepository;
+import com.google.sunnyday.utils.Constants;
 import com.google.sunnyday.utils.Utils;
 
-import org.w3c.dom.Text;
-
-import java.text.SimpleDateFormat;
 import java.util.Date;
-
-import okhttp3.internal.Util;
 
 
 public class WeatherViewModel extends AndroidViewModel {
@@ -37,17 +32,17 @@ public class WeatherViewModel extends AndroidViewModel {
 
     public ObservableField<Weather> weather = new ObservableField<Weather>();
 
+    private WeatherRepository weatherRepository;
+
     public WeatherViewModel(@NonNull Application application) {
         super(application);
-
+        weatherRepository = new WeatherRepository(application);
         this.lat = new MutableLiveData<>();
         this.lon = new MutableLiveData<>();
         this.cityname = new MutableLiveData<>();
-
     }
 
     public LiveData<Weather> getWeatherObservable() {
-        WeatherRepository weatherRepository = WeatherRepository.getInstance();
         weatherObservable = weatherRepository.getWeatherForecast(cityname.getValue(), lat.getValue(), lon.getValue());
         return weatherObservable;
     }
@@ -98,9 +93,7 @@ public class WeatherViewModel extends AndroidViewModel {
 
     @BindingAdapter({"set_text"})
     public static void setStringDate(TextView view, String resource) {
-        Log.d(TAG, "date :"+resource);
         Date updatedate = new Date(Long.valueOf(resource) * 1000);
-        SimpleDateFormat format = new SimpleDateFormat("h:mm a EEE, MMM d");
-        view.setText(format.format(updatedate));
+        view.setText(Utils.getDateFromFormat(Constants.DATE_FORMAT_WITH_TIME, updatedate));
     }
 }

@@ -30,4 +30,7 @@ public final class Constants {
     public static final String TAG_OUTPUT = "OUTPUT";
     // Ensures this class is never instantiated
     private Constants() {}
+
+    public static final String DATE_FORMAT_WITH_TIME = "h:mm a EEE, MMM d";
+    public static final String DATE_FORMAT_M_D = "EEE, MMM d";
 }

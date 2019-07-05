@@ -12,7 +12,6 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.work.WorkInfo;
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -22,21 +21,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonParser;
-import com.google.gson.reflect.TypeToken;
 import com.google.sunnyday.databinding.FragmentSearchBinding;
 import com.google.sunnyday.service.model.City;
 import com.google.sunnyday.service.model.Weather;
+import com.google.sunnyday.view.adapter.RecyclerViewWeatherAdapter;
 import com.google.sunnyday.viewmodel.CityViewModel;
 import com.google.sunnyday.viewmodel.WeatherViewModel;
 
-import java.lang.reflect.Type;
-import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
 
 public class SearchFragment extends Fragment {
     private final String TAG = SearchFragment.class.getSimpleName();

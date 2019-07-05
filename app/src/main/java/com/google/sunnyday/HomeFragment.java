@@ -15,7 +15,6 @@ import androidx.core.content.ContextCompat;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -28,6 +27,7 @@ import android.widget.Toast;
 
 import com.google.sunnyday.databinding.FragmentHomeBinding;
 import com.google.sunnyday.service.model.Weather;
+import com.google.sunnyday.view.adapter.RecyclerViewWeatherAdapter;
 import com.google.sunnyday.viewmodel.WeatherViewModel;
 
 import java.util.ArrayList;

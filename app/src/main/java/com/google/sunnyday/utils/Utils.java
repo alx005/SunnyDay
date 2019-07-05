@@ -11,6 +11,8 @@ import com.google.sunnyday.R;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 
 public final class Utils {
@@ -73,10 +75,15 @@ public final class Utils {
         return resourceName;
     }
 
-    public boolean isNetworkAvailable(Context context) {
+    public static boolean isNetworkAvailable(Context context) {
         ConnectivityManager connectivityManager
                 = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
         return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+    }
+
+    public static String getDateFromFormat(String dateFormat, Date date) {
+        SimpleDateFormat format = new SimpleDateFormat(dateFormat);
+        return format.format(date);
     }
 }
