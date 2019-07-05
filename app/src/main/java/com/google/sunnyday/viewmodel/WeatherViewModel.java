@@ -18,16 +18,20 @@ import com.google.sunnyday.service.repository.WeatherRepository;
 import com.google.sunnyday.utils.Constants;
 import com.google.sunnyday.utils.Utils;
 
+import java.nio.file.Path;
 import java.util.Date;
+import java.util.List;
 
 
 public class WeatherViewModel extends AndroidViewModel {
     private LiveData<Weather> weatherObservable = new LiveData<Weather>() {
     };
 
+    private LiveData<List<Weather>> weatherObservableAll = new LiveData<List<Weather>>() {
+    };
 
     private final MutableLiveData<String> lat,lon;
-    private final MutableLiveData<String> cityname;
+    private final MutableLiveData<String> cityname, fetchDate;
     private static String TAG = WeatherViewModel.class.getSimpleName();
 
     public ObservableField<Weather> weather = new ObservableField<Weather>();
@@ -40,11 +44,22 @@ public class WeatherViewModel extends AndroidViewModel {
         this.lat = new MutableLiveData<>();
         this.lon = new MutableLiveData<>();
         this.cityname = new MutableLiveData<>();
+        this.fetchDate = new MutableLiveData<>();
     }
 
-    public LiveData<Weather> getWeatherObservable() {
-        weatherObservable = weatherRepository.getWeatherForecast(cityname.getValue(), lat.getValue(), lon.getValue());
+    public LiveData<Weather> getWeatherObservable(boolean fromDB) {
+        if (fromDB) {
+            weatherObservable = weatherRepository.getWeatherForecastFromDB(cityname.getValue(), lat.getValue(), lon.getValue(), fetchDate.getValue());
+        } else {
+            weatherObservable = weatherRepository.getWeatherForecast(cityname.getValue(), lat.getValue(), lon.getValue(), fetchDate.getValue());
+        }
+
         return weatherObservable;
+    }
+
+    public LiveData<List<Weather>> getWeatherObservableAll() {
+        weatherObservableAll = weatherRepository.getAllWeather(cityname.getValue(), lat.getValue(), lon.getValue(), fetchDate.getValue());
+        return weatherObservableAll;
     }
 
     public void setWeather(Weather weather) {
@@ -52,10 +67,11 @@ public class WeatherViewModel extends AndroidViewModel {
     }
 
 
-    public void setViewModelParams(String cityname, String lat, String lon){
+    public void setViewModelParams(String cityname, String lat, String lon, String fetchDate){
         this.cityname.setValue(cityname);
         this.lat.setValue(lat);
         this.lon.setValue(lon);
+        this.fetchDate.setValue(fetchDate);
     }
 
     public void lat(String lat) {

@@ -7,6 +7,7 @@
     <string name="fragment_btm_nav">fragment_bottom_nav</string>
     <string name="btm_nav_title">Bottom Navigation</string>
     <string name="location_permission_failed_text">Weather could not be detected on your current location due to permission issue</string>
+    <string name="weather_failed">Weather service not available this time</string>
     <string name="units_metric">metric</string>
     <string name="city_db_name">CITY DB</string>
     <string name="city_table_name">CityTable</string>

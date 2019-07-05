@@ -12,6 +12,7 @@ import com.google.sunnyday.R;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.Date;
 
 
@@ -85,5 +86,9 @@ public final class Utils {
     public static String getDateFromFormat(String dateFormat, Date date) {
         SimpleDateFormat format = new SimpleDateFormat(dateFormat);
         return format.format(date);
+    }
+
+    public static String getDateToday() {
+        return Utils.getDateFromFormat(Constants.DATE_FORMAT_M_D, java.sql.Date.valueOf(LocalDate.now().toString()));
     }
 }

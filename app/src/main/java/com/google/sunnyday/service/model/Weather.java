@@ -5,9 +5,13 @@ import android.graphics.drawable.Drawable;
 import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
+import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
+import androidx.room.TypeConverter;
+import androidx.room.TypeConverters;
 
 import com.google.gson.annotations.SerializedName;
+import com.google.sunnyday.service.repository.WeatherForecastsConverter;
 
 import java.util.ArrayList;
 @Entity(tableName = "weather_table")
@@ -16,7 +20,9 @@ public class Weather {
     public Weather() {
     }
 
+
     @SerializedName("list")
+    @TypeConverters(WeatherForecastsConverter.class)
     private ArrayList<Forecasts> forecasts;
 
     public ArrayList<Forecasts> getForecasts() {
@@ -29,30 +35,35 @@ public class Weather {
 
     public class Forecasts {
         @SerializedName("dt")
+        @ColumnInfo(name = "timestamp")
         private String timestamp;
         public String getTimestamp() {
             return timestamp;
         }
 
         @SerializedName("weather")
+        @Ignore
         private ArrayList<WeatherObject> weatherList;
 
         public void setWeatherList(ArrayList<WeatherObject> weatherList) {
             this.weatherList = weatherList;
         }
 
+        @Ignore
         public ArrayList<WeatherObject> getWeatherList() {
             return weatherList;
         }
 
         public class WeatherObject {
             @SerializedName("description")
+            @Ignore
             private String weather_description;
             public String weather_description (){
                 return weather_description;
             }
 
             @SerializedName("main")
+            @Ignore
             private String weather_title;
             public String weather_title (){
                 return weather_title;

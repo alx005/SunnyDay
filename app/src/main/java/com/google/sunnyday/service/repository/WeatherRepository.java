@@ -6,14 +6,17 @@ import android.util.Log;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.Observer;
 
 import com.google.sunnyday.service.model.Weather;
 import com.google.sunnyday.utils.Constants;
 import com.google.sunnyday.utils.Utils;
 
+import java.nio.file.Path;
 import java.sql.Date;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -22,27 +25,20 @@ import retrofit2.Response;
 public class WeatherRepository {
 
     private static String TAG = WeatherRepository.class.getSimpleName();
-//    private static volatile WeatherRepository sSoleInstance;
     private static String appid = "e324535fa70cc7197fbc91fa6dcb573c";
     private static String units = "metric";
     private static String limitResults = "33";
 
     //DB
-//    private WeatherDao weatherDao;
-//    private LiveData<Weather> weatherDbLiveData;
-//    private static WeatherDatabase weatherDb;
+    private WeatherDao weatherDao;
+    private static WeatherDatabase weatherDb;
 
-    //private constructor.
+    //constructor
     public WeatherRepository(Application application){
-//        weatherDb = WeatherDatabase.getDatabase(application);
-//        weatherDao = weatherDb.weatherDao();
+        weatherDb = WeatherDatabase.getDatabase(application);
+        weatherDao = weatherDb.weatherDao();
     }
 
-
-//    public static WeatherRepository getInstance(Application application) {
-//        sSoleInstance = new WeatherRepository(application);
-//        return sSoleInstance;
-//    }
 
     public LiveData<Weather> getCurrentWeather(String lat, String lon) {
         final MutableLiveData<Weather> data = new MutableLiveData<>();
@@ -66,14 +62,32 @@ public class WeatherRepository {
         return data;
     }
 
-    public LiveData<Weather> getWeatherForecast(String cityname, String lat, String lon) {
-        MutableLiveData<Weather> fetchedWeather;
-        //get from db
-        callWeatherService(cityname, lat, lon);
-        //get webservice
-        fetchedWeather = callWeatherService(cityname, lat, lon);
+    public LiveData<Weather> getWeatherForecastFromDB(String cityname, String lat, String lon, String fetchedDate) {
+        return callWeatherFromDB(cityname, lat, lon, fetchedDate);
+    }
+
+    public LiveData<Weather> getWeatherForecast(String cityname, String lat, String lon, String fetchedDate) {
+        return callWeatherService(cityname, lat, lon);
+    }
+
+    public LiveData<List<Weather>> getAllWeather(String cityname, String lat, String lon, String fetchedDate) {
+
+        LiveData<List<Weather>> fetchedWeather;
+        //retrieve from DB
+        fetchedWeather = weatherDao.getAllWeather(fetchedDate);
         return fetchedWeather;
     }
+
+    private LiveData<Weather> callWeatherFromDB(String cityname, String lat, String lon, String fetchedDate) {
+        Log.d(TAG, "Fetching from DAO "+cityname +" "+ lat +","+lon+ " " + fetchedDate);
+        if (cityname == null) {
+            return weatherDao.getWeatherWithCoordinates(lat, lon, fetchedDate);
+        } else {
+            return weatherDao.getWeatherWithCityName(cityname, fetchedDate);
+        }
+    }
+
+
 
     private MutableLiveData<Weather> callWeatherService(String cityname, String lat, String lon) {
         final MutableLiveData<Weather> data = new MutableLiveData<>();
@@ -98,7 +112,7 @@ public class WeatherRepository {
                     //modify weather
                     Weather weather = response.body();
                     //today
-                    String currentDate = Utils.getDateFromFormat(Constants.DATE_FORMAT_M_D, Date.valueOf(LocalDate.now().toString()));
+                    String currentDate = Utils.getDateToday();
                     String currentForecastDate = "";
 
                     ArrayList<Weather.Forecasts> newForecast = new ArrayList<>();
@@ -123,15 +137,14 @@ public class WeatherRepository {
                     weather.setDatefetched(currentDate);
 
                     weather.setLat(lat);
-                    weather.setLat(lon);
-                    weather.setLat(cityname);
-
+                    weather.setLon(lon);
+                    if (cityname != null) {
+                        weather.setCityname(cityname.toLowerCase());
+                    }
                     //save to db
-//                    insert(weather);
+                    insert(weather);
 
                     data.setValue(weather);
-
-
 
                 }
 
@@ -146,24 +159,24 @@ public class WeatherRepository {
         return data;
     }
 
-//    //DB
-//    public void insert(Weather weather) {
-//        new insertAsyncTask(weatherDao).execute(weather);
-//    }
-//
-//    private static class insertAsyncTask extends AsyncTask<Weather, Void, Void> {
-//
-//        private WeatherDao mAsyncTaskDao;
-//
-//        insertAsyncTask(WeatherDao dao) {
-//            mAsyncTaskDao = dao;
-//        }
-//
-//        @Override
-//        protected Void doInBackground(final Weather... params) {
-//            mAsyncTaskDao.insert(params[0]);
-//            return null;
-//        }
-//    }
+    //DB
+    public void insert(Weather weather) {
+        new insertAsyncTask(weatherDao).execute(weather);
+    }
+
+    private static class insertAsyncTask extends AsyncTask<Weather, Void, Void> {
+
+        private WeatherDao mAsyncTaskDao;
+
+        insertAsyncTask(WeatherDao dao) {
+            mAsyncTaskDao = dao;
+        }
+
+        @Override
+        protected Void doInBackground(final Weather... params) {
+            mAsyncTaskDao.insert(params[0]);
+            return null;
+        }
+    }
 
 }

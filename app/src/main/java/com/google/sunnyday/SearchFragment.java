@@ -20,10 +20,12 @@ import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.google.sunnyday.databinding.FragmentSearchBinding;
 import com.google.sunnyday.service.model.City;
 import com.google.sunnyday.service.model.Weather;
+import com.google.sunnyday.utils.Utils;
 import com.google.sunnyday.view.adapter.RecyclerViewWeatherAdapter;
 import com.google.sunnyday.viewmodel.CityViewModel;
 import com.google.sunnyday.viewmodel.WeatherViewModel;
@@ -151,27 +153,40 @@ public class SearchFragment extends Fragment {
     private void getWeatherWithCityName(String cityname) {
 
         final WeatherViewModel viewModel = ViewModelProviders.of(SearchFragment.this).get(WeatherViewModel.class);
-        viewModel.setViewModelParams(cityname, null,null);
-        viewModel.getWeatherObservable().observe(SearchFragment.this, new Observer<Weather>() {
+        viewModel.setViewModelParams(cityname, null,null, Utils.getDateToday());
+        viewModel.getWeatherObservable(true).observe(SearchFragment.this, new Observer<Weather>() {
             @Override
             public void onChanged(Weather weather) {
-                if (weather == null || adapter == null){
-                    Log.e(TAG, "null weather");
-                    weather = null;
+                if (weather == null){
+                    Log.d(TAG, "failed to get from DB, getting from service");
+                    viewModel.getWeatherObservable(false).observe(SearchFragment.this, new Observer<Weather>() {
+                        @Override
+                        public void onChanged(Weather weather) {
+                            if (weather != null) {
+                                reloadUIWithWeather(viewModel, weather);
+                            } else {
+                                Log.e(TAG, "null weather");
+                                Toast.makeText(getContext(),getActivity().getString(R.string.weather_failed),Toast.LENGTH_LONG).show();
+                            }
+                        }
+                    });
                 } else {
-                    viewModel.setWeather(weather);
-
-                    adapter.forecasts = weather.getForecasts();
-                    adapter.notifyDataSetChanged();
-
-                    for (int i = 0; i < weather.getForecasts().size(); i++) {
-                        Weather.Forecasts forecasts = weather.getForecasts().get(i);
-                        Log.d(TAG,"Weathers : "+forecasts.getWeatherList().get(0).weather_description());
-                    }
+                    reloadUIWithWeather(viewModel, weather);
                 }
-
             }
         });
+    }
+
+    private void reloadUIWithWeather(WeatherViewModel viewModel, Weather weather) {
+        viewModel.setWeather(weather);
+
+        adapter.forecasts = weather.getForecasts();
+        adapter.notifyDataSetChanged();
+
+        for (int i = 0; i < weather.getForecasts().size(); i++) {
+            Weather.Forecasts forecasts = weather.getForecasts().get(i);
+            Log.d(TAG,"Weathers : "+forecasts.getWeatherList().get(0).weather_description());
+        }
     }
 
 }

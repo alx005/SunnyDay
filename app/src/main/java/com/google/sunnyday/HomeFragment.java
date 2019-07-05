@@ -27,10 +27,12 @@ import android.widget.Toast;
 
 import com.google.sunnyday.databinding.FragmentHomeBinding;
 import com.google.sunnyday.service.model.Weather;
+import com.google.sunnyday.utils.Utils;
 import com.google.sunnyday.view.adapter.RecyclerViewWeatherAdapter;
 import com.google.sunnyday.viewmodel.WeatherViewModel;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import static android.content.Context.LOCATION_SERVICE;
 
@@ -113,27 +115,60 @@ public class HomeFragment extends Fragment {
 
         final WeatherViewModel viewModel = ViewModelProviders.of(HomeFragment.this).get(WeatherViewModel.class);
         binding.setWeatherViewModel(viewModel);
-        viewModel.setViewModelParams(null, lat, lon);
-        viewModel.getWeatherObservable().observe(HomeFragment.this, new Observer<Weather>() {
+        viewModel.setViewModelParams(null, lat, lon, Utils.getDateToday());
+        viewModel.getWeatherObservable(true).observe(HomeFragment.this, new Observer<Weather>() {
             @Override
             public void onChanged(Weather weather) {
-                if (weather == null || adapter == null){
-                    Log.e(TAG, "null weather");
-                    weather = null;
+                if (weather == null){
+                    Log.d(TAG, "failed to get from DB, getting from service");
+                    viewModel.getWeatherObservable(false).observe(HomeFragment.this, new Observer<Weather>() {
+                        @Override
+                        public void onChanged(Weather weather) {
+                            if (weather != null) {
+                                reloadUIWithWeather(viewModel, weather);
+                            } else {
+                                Log.e(TAG, "null weather");
+                                Toast.makeText(getContext(),getActivity().getString(R.string.weather_failed),Toast.LENGTH_LONG).show();
+                            }
+                        }
+                    });
                 } else {
-                    viewModel.setWeather(weather);
-
-                    adapter.forecasts = weather.getForecasts();
-                    adapter.notifyDataSetChanged();
-
-                    for (int i = 0; i < weather.getForecasts().size(); i++) {
-                        Weather.Forecasts forecasts = weather.getForecasts().get(i);
-                        Log.d(TAG,"Weathers : "+forecasts.getWeatherList().get(0).weather_description());
-                    }
+                    reloadUIWithWeather(viewModel, weather);
                 }
-
             }
         });
+
+
+//        viewModel.getWeatherObservableAll().observe(HomeFragment.this, new Observer<List<Weather>>() {
+//            @Override
+//            public void onChanged(List<Weather> weathers) {
+//                if (weathers != null && weathers.size() > 0) {
+//                    Log.e(TAG, "weathers not null");
+//                    Weather weather = weathers.get(0);
+//                    Log.i(TAG, "WEATHER LAT LON "+ weather.getLat() +","+weather.getLon());
+//                    for (int i = 0; i < weather.getForecasts().size(); i++) {
+//                        Weather.Forecasts forecasts = weather.getForecasts().get(i);
+//                        Log.d(TAG,"Weathers : "+forecasts.getWeatherList().get(0).weather_description());
+//                        Log.d(TAG, "fetched date "+ weather.getDatefetched()+ " " + lat+" " +lon);
+//                    }
+//                } else {
+//                    Log.e(TAG, "getWeatherObservableAll null");
+//                }
+//            }
+//        });
+
+    }
+
+    private void reloadUIWithWeather(WeatherViewModel viewModel, Weather weather) {
+        viewModel.setWeather(weather);
+
+        adapter.forecasts = weather.getForecasts();
+        adapter.notifyDataSetChanged();
+
+        for (int i = 0; i < weather.getForecasts().size(); i++) {
+            Weather.Forecasts forecasts = weather.getForecasts().get(i);
+            Log.d(TAG,"Weathers : "+forecasts.getWeatherList().get(0).weather_description());
+        }
     }
 
     //LOCATION

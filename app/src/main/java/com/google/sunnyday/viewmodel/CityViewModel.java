@@ -9,7 +9,6 @@ import androidx.work.WorkManager;
 import java.util.List;
 
 import com.google.sunnyday.service.model.City;
-import com.google.sunnyday.service.repository.LocalRepository;
 
 
 public class CityViewModel extends AndroidViewModel {
@@ -38,24 +37,24 @@ public class CityViewModel extends AndroidViewModel {
 //        mWorkManager.enqueue(getJSON);
 //    }
 
-    private LocalRepository repository;
-    // Using LiveData and caching what getAlphabetizedWords returns has several benefits:
-    // - We can put an observer on the data (instead of polling for changes) and only update the
-    //   the UI when the data actually changes.
-    // - Repository is completely separated from the UI through the ViewModel.
-    private LiveData<List<City>> allCity;
-
+//    private LocalRepository repository;
+//    // Using LiveData and caching what getAlphabetizedWords returns has several benefits:
+//    // - We can put an observer on the data (instead of polling for changes) and only update the
+//    //   the UI when the data actually changes.
+//    // - Repository is completely separated from the UI through the ViewModel.
+//    private LiveData<List<City>> allCity;
+//
     public CityViewModel(Application application) {
         super(application);
-        repository = new LocalRepository(application);
-        allCity = repository.getAllCity();
+//        repository = new LocalRepository(application);
+//        allCity = repository.getAllCity();
     }
-
-    public LiveData<List<City>> getAllCity() {
-        return allCity;
-    }
-
-    public void insert(City city) {
-        repository.insert(city);
-    }
+//
+//    public LiveData<List<City>> getAllCity() {
+//        return allCity;
+//    }
+//
+//    public void insert(City city) {
+//        repository.insert(city);
+//    }
 }
