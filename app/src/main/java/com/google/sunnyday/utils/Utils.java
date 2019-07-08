@@ -1,12 +1,20 @@
 package com.google.sunnyday.utils;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.SharedPreferences;
+import android.content.res.Resources;
+import android.graphics.drawable.Drawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.text.TextUtils;
 import android.util.Log;
+import android.util.TypedValue;
+import android.view.View;
 
+import androidx.annotation.ColorInt;
 import androidx.annotation.WorkerThread;
+import androidx.core.graphics.drawable.DrawableCompat;
 
 import com.google.sunnyday.R;
 
@@ -98,5 +106,36 @@ public final class Utils {
         {return "";}
         return Character.toUpperCase(stringToConvert.charAt(0)) +
                 stringToConvert.substring(1).toLowerCase();
+    }
+
+    public static int colorOfAttribute(Context context, int attributeId) {
+        TypedValue typedValue = new TypedValue();
+        Resources.Theme theme = context.getTheme();
+        theme.resolveAttribute(attributeId, typedValue, true);
+        @ColorInt int color = typedValue.data;
+        return color;
+    }
+
+    public static void setTintColor(View view, int color) {
+        Drawable drawable = view.getBackground();
+        drawable = DrawableCompat.wrap(drawable);
+        DrawableCompat.setTint(drawable, color);
+    }
+
+    public static String getSavedStringWithKey(String key, String defValue, Activity activity) {
+        SharedPreferences sharedPref = activity.getPreferences(Context.MODE_PRIVATE);
+        return sharedPref.getString(key, defValue);
+    }
+
+    public static int getSavedIntWithKey(String key, int defValue, Activity activity) {
+        SharedPreferences sharedPref = activity.getPreferences(Context.MODE_PRIVATE);
+        return sharedPref.getInt(key, defValue);
+    }
+
+    public static void saveIntToPref(int resourceId, int value, Activity activity) {
+        SharedPreferences sharedPref = activity.getPreferences(Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putInt(activity.getString(resourceId), value);
+        editor.commit();
     }
 }

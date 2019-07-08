@@ -62,6 +62,7 @@ public class HomeFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         Log.d(TAG, "onCreateView");
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_home, container, false);
+//        binding.loadingIndicator.show();
         View view = binding.getRoot();
 
         recyclerView = binding.weatherRv;
@@ -71,6 +72,12 @@ public class HomeFragment extends Fragment {
         recyclerView.setAdapter(adapter);
 
         return view;
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+//        setRetainInstance(true);
     }
 
     @Override
@@ -165,10 +172,10 @@ public class HomeFragment extends Fragment {
         adapter.forecasts = weather.getForecasts();
         adapter.notifyDataSetChanged();
 
-        for (int i = 0; i < weather.getForecasts().size(); i++) {
-            Weather.Forecasts forecasts = weather.getForecasts().get(i);
-            Log.d(TAG,"Weathers : "+forecasts.getWeatherList().get(0).weather_description());
-        }
+//        for (int i = 0; i < weather.getForecasts().size(); i++) {
+//            Weather.Forecasts forecasts = weather.getForecasts().get(i);
+//            Log.d(TAG,"Weathers : "+forecasts.getWeatherList().get(0).weather_description());
+//        }
     }
 
     //LOCATION

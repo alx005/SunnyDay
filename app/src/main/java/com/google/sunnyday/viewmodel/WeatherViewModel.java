@@ -1,25 +1,15 @@
 package com.google.sunnyday.viewmodel;
 
 import android.app.Application;
-import android.util.Log;
-import android.widget.ImageView;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.databinding.BindingAdapter;
 import androidx.databinding.ObservableField;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
-import com.bumptech.glide.Glide;
 import com.google.sunnyday.service.model.Weather;
 import com.google.sunnyday.service.repository.WeatherRepository;
-import com.google.sunnyday.utils.Constants;
-import com.google.sunnyday.utils.Utils;
-
-import java.nio.file.Path;
-import java.util.Date;
 import java.util.List;
 
 
@@ -81,40 +71,5 @@ public class WeatherViewModel extends AndroidViewModel {
         this.lon.setValue(lon);
     }
 
-    @BindingAdapter({"load_image"})
-    public static void setImageViewResource(ImageView view, String resource) {
-        String imageName = "";
 
-        if (resource == null) {
-            Log.d(TAG, "resource is null");
-        } else {
-            imageName = Utils.getImageForWeather(resource);
-
-            if (view == null) {
-                Log.d(TAG, "view is null");
-            }
-            if (resource == null) {
-                Log.d(TAG, "imageUrl is null");
-            }
-
-            Log.d(TAG, "loading image "+imageName);
-
-            Glide.with(view.getContext())
-                    .asGif()
-                    .load(view.getContext().getResources().getIdentifier(imageName, "drawable", view.getContext().getPackageName()))
-                    .into(view);
-        }
-
-    }
-
-    @BindingAdapter({"set_text"})
-    public static void setStringDate(TextView view, String resource) {
-        Date updatedate = new Date(Long.valueOf(resource) * 1000);
-        view.setText(Utils.getDateFromFormat(Constants.DATE_FORMAT_WITH_TIME, updatedate));
-    }
-
-    @BindingAdapter({"camel_case_string"})
-    public static void setStringToCamelCase(TextView view, String resource) {
-        view.setText(Utils.camelCase(resource));
-    }
 }

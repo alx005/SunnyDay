@@ -41,6 +41,7 @@ public class SearchFragment extends Fragment {
     private ListView listView;
     private RecyclerViewWeatherAdapter adapter;
     private RecyclerView recyclerView;
+    private String savedSearch = new String();
 
     @Nullable
     @Override
@@ -59,6 +60,30 @@ public class SearchFragment extends Fragment {
     }
 
     @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        Log.i(TAG, "onSaveInstanceState");
+        outState.putString("SearchText", searchView.getQuery().toString());
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
+        Log.i(TAG, "onViewStateRestored");
+        if (savedInstanceState != null) {
+            savedSearch = savedInstanceState.getString("SearchText");
+            Log.i(TAG, "onSaveInstanceState "+savedSearch);
+        }
+        super.onViewStateRestored(savedInstanceState);
+        if (savedInstanceState != null) {
+            savedSearch = savedInstanceState.getString("SearchText");
+            Log.i(TAG, "onSaveInstanceState "+savedSearch);
+        }
+
+
+
+    }
+
+    @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
@@ -73,30 +98,6 @@ public class SearchFragment extends Fragment {
 
         Log.i(TAG, "onCreateOptionsMenu");
 
-        // Get the ViewModel
-//        cViewModel = ViewModelProviders.of(SearchFragment.this).get(CityViewModel.class);
-//
-//        City city = new City("Alexis");
-//
-//        cViewModel.getAllCity().observe(this, new Observer<List<City>>() {
-//            @Override
-//            public void onChanged(List<City> cities) {
-//
-//                for (int i = 0; i < cities.size(); i++){
-//                    City retrievedcity = cities.get(i);
-//                    Log.d(TAG, "Alexis CITY: " + retrievedcity.get_id());
-//                    Log.d(TAG, "Alexis CITY: " + retrievedcity.getName());
-//                }
-//            }
-//        });
-//
-//        Log.d(TAG, "adding city"+ city.toString());
-//        cViewModel.insert(city);
-//
-//
-        //Load JSON
-//        String mJsonString = loadJSONFromAsset(getContext());
-//        createRecyclerView(cities);
 
         // Associate searchable configuration with the SearchView
         SearchManager searchManager = (SearchManager) getActivity().getSystemService(Context.SEARCH_SERVICE);
@@ -116,6 +117,8 @@ public class SearchFragment extends Fragment {
                     getWeatherWithCityName(query);
                 }
 
+
+
                 return false;
             }
 
@@ -127,6 +130,12 @@ public class SearchFragment extends Fragment {
                 return false;
             }
         });
+
+        if (savedSearch != null) {
+            Log.d(TAG, "savedSearch: "+ savedSearch);
+            searchView.setQuery(savedSearch, false);
+        }
+
 
     }
 
@@ -187,5 +196,4 @@ public class SearchFragment extends Fragment {
             Weather.Forecasts forecasts = weather.getForecasts().get(i);
         }
     }
-
 }

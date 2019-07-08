@@ -1,29 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".BottomNavFragment">
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
-   <fragment
-       android:id="@+id/bottomNavFragment"
-       android:name="androidx.navigation.fragment.NavHostFragment"
-       android:layout_width="match_parent"
-       android:layout_height="match_parent"
-       android:layout_above="@id/bottomNavigation"
-       app:defaultNavHost="true"
-       app:navGraph="@navigation/nav_secondary"/>
+    <data>
 
-    <com.google.android.material.bottomnavigation.BottomNavigationView
-        android:id="@+id/bottomNavigation"
+    </data>
+
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom"
-        android:layout_alignParentBottom="true"
-        app:itemIconTint="@android:color/white"
-        android:background="@android:color/background_dark"
-        app:itemTextColor="@android:color/white"
-        app:menu="@menu/bottom_navigation_menu" />
+        android:layout_height="match_parent"
+        tools:context=".BottomNavFragment">
 
-</RelativeLayout>
+        <fragment
+            android:id="@+id/bottomNavFragment"
+            android:name="androidx.navigation.fragment.NavHostFragment"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_above="@id/bottomNavigation"
+            app:defaultNavHost="true"
+            app:navGraph="@navigation/nav_secondary" />
+
+        <com.google.android.material.bottomnavigation.BottomNavigationView
+            android:id="@+id/bottomNavigation"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_gravity="bottom"
+            app:backgroundTint="?attr/colorOnPrimary"
+            app:itemIconTint="?attr/colorPrimary"
+            app:itemTextColor="?attr/colorPrimary"
+            app:menu="@menu/bottom_navigation_menu" />
+
+    </RelativeLayout>
+</layout>

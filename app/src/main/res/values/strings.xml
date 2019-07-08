@@ -11,5 +11,11 @@
     <string name="units_metric">metric</string>
     <string name="city_db_name">CITY DB</string>
     <string name="city_table_name">CityTable</string>
+    <string name="fahrenheit">°F</string>
+    <string name="celsius">°C</string>
+    <string name="temperature">Temperature</string>
+    <string name="light_theme">Light</string>
+    <string name="dark_theme">Dark</string>
+    <string name="theme">theme</string>
 
 </resources>

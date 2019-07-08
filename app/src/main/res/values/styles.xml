@@ -14,6 +14,7 @@
         <item name="colorOnSurface">#212121</item>
         <item name="android:colorBackground">@color/background</item>
         <item name="colorOnBackground">#212121</item>
+
     </style>
 
     <!-- Work around for surface color -->
@@ -23,9 +24,31 @@
 
     <style name="AppThemeDark" parent="Theme.MaterialComponents">
     <!-- Customize your theme here. -->
-    <item name="colorPrimary">#FFFFFF</item>
-    <item name="colorPrimaryDark">#FFFFFF</item>
-    <!--<item name="colorAccent">@color/colorAccent</item>-->
+        <item name="colorPrimary">#FFFFFF</item>
+        <item name="colorPrimaryDark">#FFFFFF</item>
+        <item name="colorOnPrimary">#212121</item>
+        <item name="colorError">#FFEB3B</item>
+        <item name="colorOnError">#212121</item>
+        <item name="colorSurface">#212121</item>
+        <item name="colorOnBackground">#FFFFFF</item>
+        <item name="android:colorPrimary">#212121</item>
+
 </style>
+
+    <style name="AppTheme.AppBarOverlay" parent="AppTheme">
+        <item name="android:textColorPrimary">#212121</item>
+    </style>
+
+    <style name="AppTheme.PopupOverlay" parent="AppTheme">
+        <item name="android:textColorPrimary">#212121</item>
+    </style>
+
+    <style name="AppThemeDark.AppBarOverlay" parent="AppThemeDark">
+        <item name="android:textColorPrimary">#FFFFFF</item>
+    </style>
+
+    <style name="AppThemeDark.PopupOverlay" parent="AppThemeDark">
+        <item name="android:textColorPrimary">#FFFFFF</item>
+    </style>
 
 </resources>

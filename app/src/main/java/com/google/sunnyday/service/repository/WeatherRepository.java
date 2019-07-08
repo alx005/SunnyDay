@@ -87,13 +87,9 @@ public class WeatherRepository {
         }
     }
 
-
-
     private MutableLiveData<Weather> callWeatherService(String cityname, String lat, String lon) {
         final MutableLiveData<Weather> data = new MutableLiveData<>();
         WeatherService service = RetrofitClientInstance.getRetrofitInstance().create(WeatherService.class);
-
-
         Call<Weather> call;
 
         if (cityname != null) {
@@ -106,7 +102,7 @@ public class WeatherRepository {
         call.enqueue(new Callback<Weather>() {
             @Override
             public void onResponse(Call<Weather> call, Response<Weather> response) {
-                if (response != null) {
+                if (response != null && response.body() != null) {
                     Log.d(TAG, "Weather results :\n"+ response.body());
 
                     //modify weather
@@ -146,12 +142,16 @@ public class WeatherRepository {
 
                     data.setValue(weather);
 
+                } else {
+                    Log.d(TAG, "Failed to fetch weather");
+                    data.setValue(null);
                 }
 
             }
 
             @Override
             public void onFailure(Call<Weather> call, Throwable t) {
+                Log.d(TAG, "Failed to fetch weather "+t.getLocalizedMessage());
                 data.setValue(null);
             }
         });
