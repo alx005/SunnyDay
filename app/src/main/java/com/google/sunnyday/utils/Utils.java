@@ -20,6 +20,7 @@ import com.google.sunnyday.R;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Method;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.Date;
@@ -144,5 +145,17 @@ public final class Utils {
         SharedPreferences.Editor editor = sharedPref.edit();
         editor.putString(activity.getString(resourceId), value);
         editor.commit();
+    }
+
+    public static int getThemeId(Context context) {
+        try {
+            Class<?> wrapper = Context.class;
+            Method method = wrapper.getMethod("getThemeResId");
+            method.setAccessible(true);
+            return (Integer) method.invoke(context);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return 0;
     }
 }

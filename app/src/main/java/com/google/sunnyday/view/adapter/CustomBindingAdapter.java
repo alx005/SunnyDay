@@ -1,9 +1,13 @@
 package com.google.sunnyday.view.adapter;
 
 import android.app.Activity;
+import android.content.Context;
+import android.content.res.Resources;
+import android.graphics.drawable.Drawable;
 import android.util.Log;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.ToggleButton;
 
 import androidx.databinding.BindingAdapter;
 
@@ -63,6 +67,21 @@ public class CustomBindingAdapter {
             float fahrenheight = (Float.valueOf(resource) * 9/5) + 32;
             view.setText(String.valueOf(fahrenheight) +" "+ activity.getString(R.string.fahrenheit));
 
+        }
+    }
+
+    @BindingAdapter({"set_toggle_image"})
+    public static void setToggleImage(ToggleButton view, String resource) {
+
+        Context context = view.getContext();
+
+        switch (Utils.getThemeId(context)) {
+            case R.style.AppTheme:
+                view.setBackgroundDrawable(context.getDrawable(R.drawable.favorite_white));
+                break;
+            case R.style.AppThemeDark:
+                view.setBackgroundDrawable(context.getDrawable(R.drawable.favorite_black));
+                break;
         }
     }
 }

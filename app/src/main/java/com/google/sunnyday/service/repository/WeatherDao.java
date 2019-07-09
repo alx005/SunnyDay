@@ -6,6 +6,7 @@ import androidx.room.Dao;
 import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
+import androidx.room.Update;
 
 import com.google.sunnyday.service.model.Weather;
 
@@ -29,6 +30,9 @@ public interface WeatherDao {
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     void insert(Weather weather);
+
+    @Update
+    void update(Weather weather);
 
     @Query("DELETE FROM weather_table")
     void deleteAll();

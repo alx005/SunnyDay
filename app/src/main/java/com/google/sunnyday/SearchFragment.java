@@ -196,8 +196,6 @@ public class SearchFragment extends Fragment {
         adapter.notifyDataSetChanged();
         binding.loadingProgress.setVisibility(View.GONE);
 
-//        for (int i = 0; i < weather.getForecasts().size(); i++) {
-//            Weather.Forecasts forecasts = weather.getForecasts().get(i);
-//        }
+
     }
 }

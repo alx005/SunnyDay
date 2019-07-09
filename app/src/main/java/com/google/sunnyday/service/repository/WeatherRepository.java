@@ -164,6 +164,11 @@ public class WeatherRepository {
         new insertAsyncTask(weatherDao).execute(weather);
     }
 
+    //DB
+    public void update(Weather weather) {
+        new insertAsyncTask(weatherDao).execute(weather);
+    }
+
     private static class insertAsyncTask extends AsyncTask<Weather, Void, Void> {
 
         private WeatherDao mAsyncTaskDao;
@@ -178,5 +183,6 @@ public class WeatherRepository {
             return null;
         }
     }
+
 
 }
