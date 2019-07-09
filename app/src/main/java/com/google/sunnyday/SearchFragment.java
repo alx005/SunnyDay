@@ -223,9 +223,8 @@ public class SearchFragment extends Fragment {
     private void setupToggleBtn(){
         Fragment lifecycleOwner = SearchFragment.this;
         WeatherViewModel viewModel = getViewModel();
+
         //getFavorites
-
-
         viewModel.getFavorites().observe(lifecycleOwner, new Observer<List<String>>() {
             @Override
             public void onChanged(List<String> strings) {
@@ -260,8 +259,6 @@ public class SearchFragment extends Fragment {
                     currentWeather.setFavorite(true);
                     viewModel.updateWeatherFavorite(currentWeather);
                 }
-
-
             }
         });
     }
