@@ -28,6 +28,9 @@ public interface WeatherDao {
     @Query("SELECT * from weather_table WHERE datefetched = :fetchedDate")
     LiveData<List<Weather>> getAllWeather(String fetchedDate);
 
+    @Query("SELECT cityname from weather_table WHERE favorite == 1")
+    LiveData<List<String>> getFavorites();
+
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     void insert(Weather weather);
 

@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools">
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/layout">
 
     <data>
+
         <variable
             name="viewmodel"
             type="com.google.sunnyday.viewmodel.WeatherViewModel" />
@@ -51,32 +53,32 @@
 
         <TextView
             android:id="@+id/cityname"
-            android:layout_width="248dp"
-            android:layout_height="72dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
+            android:layout_marginLeft="10dp"
+            android:textSize="30dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
 
         <ToggleButton
             android:id="@+id/toggleBtn"
-            android:layout_width="51dp"
-            android:layout_height="42dp"
+            android:layout_width="22dp"
+            android:layout_height="21dp"
             android:layout_centerVertical="true"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/favorite_black"
             android:focusable="false"
             android:focusableInTouchMode="false"
             android:textOff=""
             android:textOn=""
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.802"
-            app:layout_constraintStart_toEndOf="@+id/cityname"
-            app:layout_constraintTop_toTopOf="parent"
             android:visibility="invisible"
-            />
-
-
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.063"
+            app:layout_constraintStart_toEndOf="@+id/cityname"
+            app:layout_constraintTop_toTopOf="parent" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

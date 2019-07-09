@@ -16,6 +16,7 @@ import java.util.List;
 public class WeatherViewModel extends AndroidViewModel {
     private LiveData<Weather> weatherObservable = new LiveData<Weather>() {
     };
+    private LiveData<List<String>> favoriteObservable = new LiveData<List<String>>() {};
 
     private LiveData<List<Weather>> weatherObservableAll = new LiveData<List<Weather>>() {
     };
@@ -52,8 +53,17 @@ public class WeatherViewModel extends AndroidViewModel {
         return weatherObservableAll;
     }
 
+    public LiveData<List<String>> getFavorites() {
+        favoriteObservable = weatherRepository.getFavorites();
+        return favoriteObservable;
+    }
+
     public void setWeather(Weather weather) {
         this.weather.set(weather);
+    }
+
+    public void updateWeatherFavorite(Weather weather) {
+        weatherRepository.update(weather);
     }
 
 

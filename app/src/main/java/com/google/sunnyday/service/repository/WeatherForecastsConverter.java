@@ -29,19 +29,4 @@ public class WeatherForecastsConverter {
         return gson.toJson(myObjects);
     }
 
-
-//    public CountryLangs storedStringToLanguages(String value) {
-//        List<String> langs = Arrays.asList(value.split("\\s*,\\s*"));
-//        return new CountryLangs(langs);
-//    }
-//
-//    @TypeConverter
-//    public String languagesToStoredString(CountryLangs cl) {
-//        String value = "";
-//
-//        for (String lang :cl.getCountryLangs())
-//            value += lang + ",";
-//
-//        return value;
-//    }
 }

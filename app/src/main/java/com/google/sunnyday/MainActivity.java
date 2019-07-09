@@ -52,5 +52,9 @@ public class MainActivity extends AppCompatActivity {
         return theme;
     }
 
-
+//    @Override
+//    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+//        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+//        Log.d(TAG,"permission granted");
+//    }
 }

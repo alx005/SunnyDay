@@ -66,6 +66,10 @@ public class WeatherRepository {
         return callWeatherFromDB(cityname, lat, lon, fetchedDate);
     }
 
+    public LiveData<List<String>> getFavorites() {
+        return weatherDao.getFavorites();
+    }
+
     public LiveData<Weather> getWeatherForecast(String cityname, String lat, String lon, String fetchedDate) {
         return callWeatherService(cityname, lat, lon);
     }
@@ -166,7 +170,7 @@ public class WeatherRepository {
 
     //DB
     public void update(Weather weather) {
-        new insertAsyncTask(weatherDao).execute(weather);
+        new updateAsyncTask(weatherDao).execute(weather);
     }
 
     private static class insertAsyncTask extends AsyncTask<Weather, Void, Void> {
@@ -179,10 +183,24 @@ public class WeatherRepository {
 
         @Override
         protected Void doInBackground(final Weather... params) {
-            mAsyncTaskDao.insert(params[0]);
+            mAsyncTaskDao.update(params[0]);
             return null;
         }
     }
 
+    private static class updateAsyncTask extends AsyncTask<Weather, Void, Void> {
+
+        private WeatherDao mAsyncTaskDao;
+
+        updateAsyncTask(WeatherDao dao) {
+            mAsyncTaskDao = dao;
+        }
+
+        @Override
+        protected Void doInBackground(final Weather... params) {
+            mAsyncTaskDao.update(params[0]);
+            return null;
+        }
+    }
 
 }

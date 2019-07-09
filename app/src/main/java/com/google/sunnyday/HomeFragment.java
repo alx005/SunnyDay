@@ -50,19 +50,12 @@ public class HomeFragment extends Fragment {
     private RecyclerViewWeatherAdapter adapter;
     private RecyclerView recyclerView;
 
-//    public static HomeFragment newInstance() {
-//        Bundle args = new Bundle();
-//        HomeFragment fragment = new HomeFragment();
-//        fragment.setArguments(args);
-//        return fragment;
-//    }
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         Log.d(TAG, "onCreateView");
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_home, container, false);
-//        binding.loadingIndicator.show();
         View view = binding.getRoot();
 
         recyclerView = binding.weatherRv;
@@ -72,18 +65,6 @@ public class HomeFragment extends Fragment {
         recyclerView.setAdapter(adapter);
 
         return view;
-    }
-
-    @Override
-    public void onSaveInstanceState(@NonNull Bundle outState) {
-        super.onSaveInstanceState(outState);
-//        setRetainInstance(true);
-    }
-
-    @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        Log.d(TAG, "onViewCreated");
     }
 
     @Override
@@ -102,12 +83,14 @@ public class HomeFragment extends Fragment {
 
     //PERMISSIONS
     @Override
-    public void onRequestPermissionsResult(int requestCode,
-                                           String[] permissions, int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        Log.d(TAG,"permission granted "+ requestCode + " " + ACCESS_FINE_LOCATION_R_CODE + " " + grantResults[0]);
         switch (requestCode) {
             case ACCESS_FINE_LOCATION_R_CODE: {
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
                     getCurrentLocation();
                 } else {
                     Toast.makeText(getContext(), R.string.location_permission_failed_text, Toast.LENGTH_SHORT);
@@ -146,25 +129,6 @@ public class HomeFragment extends Fragment {
             }
         });
 
-
-//        viewModel.getWeatherObservableAll().observe(HomeFragment.this, new Observer<List<Weather>>() {
-//            @Override
-//            public void onChanged(List<Weather> weathers) {
-//                if (weathers != null && weathers.size() > 0) {
-//                    Log.e(TAG, "weathers not null");
-//                    Weather weather = weathers.get(0);
-//                    Log.i(TAG, "WEATHER LAT LON "+ weather.getLat() +","+weather.getLon());
-//                    for (int i = 0; i < weather.getForecasts().size(); i++) {
-//                        Weather.Forecasts forecasts = weather.getForecasts().get(i);
-//                        Log.d(TAG,"Weathers : "+forecasts.getWeatherList().get(0).weather_description());
-//                        Log.d(TAG, "fetched date "+ weather.getDatefetched()+ " " + lat+" " +lon);
-//                    }
-//                } else {
-//                    Log.e(TAG, "getWeatherObservableAll null");
-//                }
-//            }
-//        });
-
     }
 
     private void reloadUIWithWeather(WeatherViewModel viewModel, Weather weather) {
@@ -174,10 +138,6 @@ public class HomeFragment extends Fragment {
         adapter.notifyDataSetChanged();
         binding.loadingProgress.setVisibility(View.GONE);
 
-//        for (int i = 0; i < weather.getForecasts().size(); i++) {
-//            Weather.Forecasts forecasts = weather.getForecasts().get(i);
-//            Log.d(TAG,"Weathers : "+forecasts.getWeatherList().get(0).weather_description());
-//        }
     }
 
     //LOCATION
@@ -188,9 +148,9 @@ public class HomeFragment extends Fragment {
                 != PackageManager.PERMISSION_GRANTED) {
             Log.d(TAG,"requesting permission");
 
-            ActivityCompat.requestPermissions(getActivity(),
-                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+            requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
                     ACCESS_FINE_LOCATION_R_CODE);
+
         } else  {
             Log.d(TAG,"permission granted");
             getCurrentLocation();

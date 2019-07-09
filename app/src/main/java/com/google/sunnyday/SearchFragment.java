@@ -20,9 +20,9 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.ListView;
 import android.widget.Toast;
+import android.widget.ToggleButton;
 
 import com.google.sunnyday.databinding.FragmentSearchBinding;
 import com.google.sunnyday.service.model.City;
@@ -33,6 +33,7 @@ import com.google.sunnyday.viewmodel.CityViewModel;
 import com.google.sunnyday.viewmodel.WeatherViewModel;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class SearchFragment extends Fragment {
     private final String TAG = SearchFragment.class.getSimpleName();
@@ -44,6 +45,7 @@ public class SearchFragment extends Fragment {
     private RecyclerViewWeatherAdapter adapter;
     private RecyclerView recyclerView;
     private String savedSearch;
+    private List<String> favorites;
 
     @Nullable
     @Override
@@ -57,6 +59,9 @@ public class SearchFragment extends Fragment {
 
         adapter = new RecyclerViewWeatherAdapter(new ArrayList<>());
         recyclerView.setAdapter(adapter);
+
+        //TODO: cannot use binding adapter, will set manually
+        setupToggleBtn();
 
         return view;
     }
@@ -115,6 +120,7 @@ public class SearchFragment extends Fragment {
                 Log.d(TAG, "onQueryTextSubmit: "+query);
                 //get weather
                 if (query != null && query.length() > 0) {
+                    binding.cityname.setText(Utils.camelCase(query));
                     getWeatherWithCityName(query);
                 }
                 return false;
@@ -122,21 +128,16 @@ public class SearchFragment extends Fragment {
 
             @Override
             public boolean onQueryTextChange(String query) {
-                Log.d(TAG, "onQueryTextChange: "+ query);
-
                 //add suggestions
                 return false;
             }
         });
 
-        if (savedSearch != null) {
+        //force show the keyboard
+        if (savedSearch != null && savedSearch.length() > 0) {
             menu_search.expandActionView();
             searchView.setQuery(savedSearch, false);
         }
-
-
-
-
 
     }
 
@@ -151,19 +152,15 @@ public class SearchFragment extends Fragment {
      * Shows and hides views for when the Activity is done processing an image
      */
     private void showWorkFinished(String JSONString) {
-//        Log.d(TAG, "showWorkFinished");
-//        JsonParser parser = new JsonParser();
-//        JsonElement mJson =  parser.parse(JSONString);
-//        Gson gson = new Gson();
-//
-//        Type collectionType = new TypeToken<Collection<City>>(){}.getType();
-//        cities = gson.fromJson(mJson, collectionType);
+        Log.d(TAG, "showWorkFinished");
     }
 
     private void getWeatherWithCityName(String cityname) {
 
         Fragment lifecycleOwner = SearchFragment.this;
-        final WeatherViewModel viewModel = ViewModelProviders.of(lifecycleOwner).get(WeatherViewModel.class);
+        WeatherViewModel viewModel = getViewModel();
+
+        binding.setViewmodel(viewModel);
         viewModel.setViewModelParams(cityname, null,null, Utils.getDateToday());
         viewModel.getWeatherObservable(true).observe(lifecycleOwner, new Observer<Weather>() {
             @Override
@@ -194,8 +191,78 @@ public class SearchFragment extends Fragment {
 
         adapter.forecasts = weather.getForecasts();
         adapter.notifyDataSetChanged();
-        binding.loadingProgress.setVisibility(View.GONE);
+        binding.toggleBtn.setVisibility(View.VISIBLE);
+
+        checkFavorites();
 
 
+    }
+
+    private WeatherViewModel getViewModel () {
+        Fragment lifecycleOwner = SearchFragment.this;
+        final WeatherViewModel viewModel = ViewModelProviders.of(lifecycleOwner).get(WeatherViewModel.class);
+        return viewModel;
+    }
+
+    private void checkFavorites() {
+        if (binding.cityname.getText().toString().length() > 0) {
+
+            String searchCountry = binding.cityname.getText().toString().toLowerCase();
+            Log.d(TAG, "checkFavorites country: " + searchCountry);
+            Log.d(TAG, "checkFavorites in " + favorites.toString());
+
+            if (favorites.contains(searchCountry)) {
+                Log.d(TAG, "found  "+searchCountry);
+                binding.toggleBtn.setChecked(true);
+            } else {
+                binding.toggleBtn.setChecked(false);
+            }
+        }
+    }
+
+    private void setupToggleBtn(){
+        Fragment lifecycleOwner = SearchFragment.this;
+        WeatherViewModel viewModel = getViewModel();
+        //getFavorites
+
+
+        viewModel.getFavorites().observe(lifecycleOwner, new Observer<List<String>>() {
+            @Override
+            public void onChanged(List<String> strings) {
+
+                favorites = strings;
+                checkFavorites();
+            }
+        });
+
+        Context context = getContext();
+        switch (Utils.getThemeId(context)) {
+            case R.style.AppTheme :
+                binding.toggleBtn.setBackgroundDrawable(context.getDrawable(R.drawable.favorite_black));
+                break;
+            case R.style.AppThemeDark:
+                binding.toggleBtn.setBackgroundDrawable(context.getDrawable(R.drawable.favorite_white));
+                break;
+            default:
+                Log.e(TAG, "theme failed");
+                break;
+        }
+
+        binding.toggleBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ToggleButton btn = (ToggleButton) v;
+                Log.i(TAG, btn.isChecked() ? "selected" : "not selected");
+
+                //save favorites
+                if (btn.isChecked()) {
+                    Weather currentWeather = binding.getViewmodel().weather.get();
+                    currentWeather.setFavorite(true);
+                    viewModel.updateWeatherFavorite(currentWeather);
+                }
+
+
+            }
+        });
     }
 }

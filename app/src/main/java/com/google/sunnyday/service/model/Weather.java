@@ -105,6 +105,16 @@ public class Weather {
     @ColumnInfo(name = "lon")
     private String lon;
 
+    @ColumnInfo(name = "favorite")
+    private boolean isFavorite;
+
+    public void setFavorite(boolean favorite) {
+        isFavorite = favorite;
+    }
+
+    public boolean isFavorite() {
+        return isFavorite;
+    }
 
     public String getDatefetched() {
         return datefetched;
