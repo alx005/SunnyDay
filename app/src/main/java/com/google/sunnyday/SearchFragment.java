@@ -17,8 +17,10 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -41,12 +43,12 @@ public class SearchFragment extends Fragment {
     private ListView listView;
     private RecyclerViewWeatherAdapter adapter;
     private RecyclerView recyclerView;
-    private String savedSearch = new String();
+    private String savedSearch;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        Log.i(TAG, "onCreateView");
+
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_search, container, false);
         View view = binding.getRoot();
 
@@ -60,28 +62,22 @@ public class SearchFragment extends Fragment {
     }
 
     @Override
-    public void onSaveInstanceState(@NonNull Bundle outState) {
-        Log.i(TAG, "onSaveInstanceState");
-        outState.putString("SearchText", searchView.getQuery().toString());
-        super.onSaveInstanceState(outState);
+    public void onPause() {
+        super.onPause();
+        Log.d(TAG, "onPause saving query : "+ searchView.getQuery().toString());
+
+        Utils.saveStringToPref(R.string.search, searchView.getQuery().toString(), getActivity());
     }
 
     @Override
-    public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
-        Log.i(TAG, "onViewStateRestored");
-        if (savedInstanceState != null) {
-            savedSearch = savedInstanceState.getString("SearchText");
-            Log.i(TAG, "onSaveInstanceState "+savedSearch);
-        }
-        super.onViewStateRestored(savedInstanceState);
-        if (savedInstanceState != null) {
-            savedSearch = savedInstanceState.getString("SearchText");
-            Log.i(TAG, "onSaveInstanceState "+savedSearch);
-        }
+    public void onResume() {
+        super.onResume();
+        Log.d(TAG, "onResume");
 
-
+        savedSearch = Utils.getSavedStringWithKey(R.string.search, null, getActivity());
 
     }
+
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -96,16 +92,21 @@ public class SearchFragment extends Fragment {
         inflater.inflate(R.menu.search_menu, menu);
         super.onCreateOptionsMenu(menu,inflater);
 
-        Log.i(TAG, "onCreateOptionsMenu");
-
-
+        Log.d(TAG, "onCreateOptionsMenu");
         // Associate searchable configuration with the SearchView
         SearchManager searchManager = (SearchManager) getActivity().getSystemService(Context.SEARCH_SERVICE);
-        searchView = (androidx.appcompat.widget.SearchView) menu.findItem(R.id.app_bar_search)
+
+        MenuItem menu_search = menu.findItem(R.id.app_bar_search);
+
+
+        searchView = (androidx.appcompat.widget.SearchView) menu_search
                 .getActionView();
         searchView.setSearchableInfo(searchManager
                 .getSearchableInfo(getActivity().getComponentName()));
         searchView.setMaxWidth(Integer.MAX_VALUE);
+        searchView.setFocusable(true);
+        searchView.setIconifiedByDefault(true);
+        searchView.setIconified(false);
 
         // listening to search query text change
         searchView.setOnQueryTextListener(new androidx.appcompat.widget.SearchView.OnQueryTextListener() {
@@ -116,9 +117,6 @@ public class SearchFragment extends Fragment {
                 if (query != null && query.length() > 0) {
                     getWeatherWithCityName(query);
                 }
-
-
-
                 return false;
             }
 
@@ -132,9 +130,12 @@ public class SearchFragment extends Fragment {
         });
 
         if (savedSearch != null) {
-            Log.d(TAG, "savedSearch: "+ savedSearch);
+            menu_search.expandActionView();
             searchView.setQuery(savedSearch, false);
         }
+
+
+
 
 
     }
@@ -161,20 +162,22 @@ public class SearchFragment extends Fragment {
 
     private void getWeatherWithCityName(String cityname) {
 
-        final WeatherViewModel viewModel = ViewModelProviders.of(SearchFragment.this).get(WeatherViewModel.class);
+        Fragment lifecycleOwner = SearchFragment.this;
+        final WeatherViewModel viewModel = ViewModelProviders.of(lifecycleOwner).get(WeatherViewModel.class);
         viewModel.setViewModelParams(cityname, null,null, Utils.getDateToday());
-        viewModel.getWeatherObservable(true).observe(SearchFragment.this, new Observer<Weather>() {
+        viewModel.getWeatherObservable(true).observe(lifecycleOwner, new Observer<Weather>() {
             @Override
             public void onChanged(Weather weather) {
                 if (weather == null){
                     Log.d(TAG, "failed to get from DB, getting from service");
-                    viewModel.getWeatherObservable(false).observe(SearchFragment.this, new Observer<Weather>() {
+                    viewModel.getWeatherObservable(false).observe(lifecycleOwner, new Observer<Weather>() {
                         @Override
                         public void onChanged(Weather weather) {
                             if (weather != null) {
                                 reloadUIWithWeather(viewModel, weather);
                             } else {
                                 Log.e(TAG, "null weather");
+                                binding.loadingProgress.setVisibility(View.GONE);
                                 Toast.makeText(getContext(),getActivity().getString(R.string.weather_failed),Toast.LENGTH_LONG).show();
                             }
                         }
@@ -191,9 +194,10 @@ public class SearchFragment extends Fragment {
 
         adapter.forecasts = weather.getForecasts();
         adapter.notifyDataSetChanged();
+        binding.loadingProgress.setVisibility(View.GONE);
 
-        for (int i = 0; i < weather.getForecasts().size(); i++) {
-            Weather.Forecasts forecasts = weather.getForecasts().get(i);
-        }
+//        for (int i = 0; i < weather.getForecasts().size(); i++) {
+//            Weather.Forecasts forecasts = weather.getForecasts().get(i);
+//        }
     }
 }

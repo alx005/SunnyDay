@@ -122,9 +122,9 @@ public final class Utils {
         DrawableCompat.setTint(drawable, color);
     }
 
-    public static String getSavedStringWithKey(String key, String defValue, Activity activity) {
+    public static String getSavedStringWithKey(int resourceId, String defValue, Activity activity) {
         SharedPreferences sharedPref = activity.getPreferences(Context.MODE_PRIVATE);
-        return sharedPref.getString(key, defValue);
+        return sharedPref.getString(activity.getString(resourceId), defValue);
     }
 
     public static int getSavedIntWithKey(String key, int defValue, Activity activity) {
@@ -136,6 +136,13 @@ public final class Utils {
         SharedPreferences sharedPref = activity.getPreferences(Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPref.edit();
         editor.putInt(activity.getString(resourceId), value);
+        editor.commit();
+    }
+
+    public static void saveStringToPref(int resourceId, String value, Activity activity) {
+        SharedPreferences sharedPref = activity.getPreferences(Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putString(activity.getString(resourceId), value);
         editor.commit();
     }
 }

@@ -3,14 +3,19 @@ package com.google.sunnyday;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SearchView;
 import androidx.navigation.NavController;
 import androidx.navigation.NavDestination;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.NavigationUI;
 
+import android.app.SearchManager;
+import android.content.Context;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationView;
@@ -26,7 +31,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        Utils.saveStringToPref(R.string.search, null, this);
 
         NavController navController = Navigation.findNavController(this, R.id.mainNavFragment);
         NavigationView navView = findViewById(R.id.navigationView);
@@ -46,5 +51,6 @@ public class MainActivity extends AppCompatActivity {
         // you could also use a switch if you have many themes that could apply
         return theme;
     }
+
 
 }

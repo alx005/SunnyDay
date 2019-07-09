@@ -136,6 +136,7 @@ public class HomeFragment extends Fragment {
                             } else {
                                 Log.e(TAG, "null weather");
                                 Toast.makeText(getContext(),getActivity().getString(R.string.weather_failed),Toast.LENGTH_LONG).show();
+                                binding.loadingProgress.setVisibility(View.GONE);
                             }
                         }
                     });
@@ -171,6 +172,7 @@ public class HomeFragment extends Fragment {
 
         adapter.forecasts = weather.getForecasts();
         adapter.notifyDataSetChanged();
+        binding.loadingProgress.setVisibility(View.GONE);
 
 //        for (int i = 0; i < weather.getForecasts().size(); i++) {
 //            Weather.Forecasts forecasts = weather.getForecasts().get(i);
