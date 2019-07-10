@@ -45,7 +45,6 @@ public class SettingsFragment extends Fragment {
 
         getFavorites();
 
-        //TODO: update
         binding.celsius.setChecked(Utils.getSavedIntWithKey(getActivity().getString(R.string.temperature), 1, getActivity()) == 0 ? false : true);
         binding.lightTheme.setChecked(Utils.getSavedIntWithKey(getActivity().getString(R.string.theme), 1, getActivity()) == 0 ? false : true);
 
@@ -91,11 +90,13 @@ public class SettingsFragment extends Fragment {
                     if (selectedBtn == binding.lightTheme) {
                         switchSelectedBtn(selectedBtn, binding.darkTheme);
                         Utils.saveIntToPref(R.string.theme, 1, getActivity());
-                        getActivity().setTheme(R.style.AppTheme);
+//                        getActivity().setTheme(R.style.AppTheme);
+                        getActivity().recreate();
                     } else {
                         switchSelectedBtn(selectedBtn, binding.lightTheme);
                         Utils.saveIntToPref(R.string.theme, 0, getActivity());
-                        getActivity().setTheme(R.style.AppThemeDark);
+//                        getActivity().setTheme(R.style.AppThemeDark);
+                        getActivity().recreate();
                     }
                 }
             }

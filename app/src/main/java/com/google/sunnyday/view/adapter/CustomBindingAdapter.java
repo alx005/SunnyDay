@@ -69,18 +69,32 @@ public class CustomBindingAdapter {
 
         }
     }
+    @BindingAdapter({"custom_src"})
+    public static void loadImageByTheme (ImageView view, String test) {
+        Context context = view.getContext();
+        switch (Utils.getThemeId(context)) {
+            case R.style.AppTheme:
+                view.setImageDrawable(context.getDrawable(R.drawable.temperature_black));
+                break;
+            case R.style.AppThemeDark:
+                view.setImageDrawable(context.getDrawable(R.drawable.temperature_white));
+                break;
+        }
+    }
 
+    //TODO: not called
     @BindingAdapter({"set_toggle_image"})
     public static void setToggleImage(ToggleButton view, String resource) {
+
 
         Context context = view.getContext();
 
         switch (Utils.getThemeId(context)) {
             case R.style.AppTheme:
-                view.setBackgroundDrawable(context.getDrawable(R.drawable.favorite_white));
+                view.setBackgroundDrawable(context.getDrawable(R.drawable.favorite_black));
                 break;
             case R.style.AppThemeDark:
-                view.setBackgroundDrawable(context.getDrawable(R.drawable.favorite_black));
+                view.setBackgroundDrawable(context.getDrawable(R.drawable.favorite_white));
                 break;
         }
     }

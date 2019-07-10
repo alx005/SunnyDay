@@ -6,6 +6,8 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.databinding.BindingMethod;
+import androidx.databinding.BindingMethods;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
@@ -35,6 +37,10 @@ import com.google.sunnyday.viewmodel.WeatherViewModel;
 import java.util.ArrayList;
 import java.util.List;
 
+//@BindingMethods({
+//        @BindingMethod(type = android.widget.ToggleButton.class,
+//                attribute = "android:background",
+//                method = "set_toggle_image") })
 public class SearchFragment extends Fragment {
     private final String TAG = SearchFragment.class.getSimpleName();
     private FragmentSearchBinding binding;
@@ -46,10 +52,14 @@ public class SearchFragment extends Fragment {
     private RecyclerView recyclerView;
     private String savedSearch;
     private List<String> favorites = new ArrayList<>();
+    private WeatherViewModel viewModel;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+
+        Fragment lifecycleOwner = SearchFragment.this;
+        viewModel = ViewModelProviders.of(lifecycleOwner).get(WeatherViewModel.class);
 
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_search, container, false);
         View view = binding.getRoot();
@@ -60,7 +70,6 @@ public class SearchFragment extends Fragment {
         adapter = new RecyclerViewWeatherAdapter(new ArrayList<>());
         recyclerView.setAdapter(adapter);
 
-        //TODO: cannot use binding adapter, will set manually
         setupToggleBtn();
 
         return view;
@@ -159,7 +168,6 @@ public class SearchFragment extends Fragment {
     private void getWeatherWithCityName(String cityname) {
 
         Fragment lifecycleOwner = SearchFragment.this;
-        WeatherViewModel viewModel = getViewModel();
 
         binding.setViewmodel(viewModel);
         viewModel.setViewModelParams(cityname, null,null, Utils.getDateToday());
@@ -199,11 +207,7 @@ public class SearchFragment extends Fragment {
 
     }
 
-    private WeatherViewModel getViewModel () {
-        Fragment lifecycleOwner = SearchFragment.this;
-        final WeatherViewModel viewModel = ViewModelProviders.of(lifecycleOwner).get(WeatherViewModel.class);
-        return viewModel;
-    }
+
 
     private void checkFavorites() {
         if (binding.cityname.getText().toString().length() > 0) {
@@ -223,7 +227,6 @@ public class SearchFragment extends Fragment {
 
     private void setupToggleBtn(){
         Fragment lifecycleOwner = SearchFragment.this;
-        WeatherViewModel viewModel = getViewModel();
 
         //getFavoriteStrings
         viewModel.getFavoriteStrings().observe(lifecycleOwner, new Observer<List<String>>() {
@@ -235,32 +238,16 @@ public class SearchFragment extends Fragment {
             }
         });
 
-        Context context = getContext();
-        switch (Utils.getThemeId(context)) {
-            case R.style.AppTheme :
-                binding.toggleBtn.setBackgroundDrawable(context.getDrawable(R.drawable.favorite_black));
-                break;
-            case R.style.AppThemeDark:
-                binding.toggleBtn.setBackgroundDrawable(context.getDrawable(R.drawable.favorite_white));
-                break;
-            default:
-                Log.e(TAG, "theme failed");
-                break;
-        }
-
         binding.toggleBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 ToggleButton btn = (ToggleButton) v;
                 Log.i(TAG, btn.isChecked() ? "selected" : "not selected");
+                Weather currentWeather = binding.getViewmodel().weather.get();
+                Log.d(TAG, "saving favorites " + currentWeather.getCityname());
+                currentWeather.setFavorite(btn.isChecked());
+                viewModel.updateWeatherFavorite(currentWeather);
 
-                //save favorites
-                if (btn.isChecked()) {
-                    Weather currentWeather = binding.getViewmodel().weather.get();
-                    Log.d(TAG, "saving favorites " + currentWeather.getCityname());
-                    currentWeather.setFavorite(true);
-                    viewModel.updateWeatherFavorite(currentWeather);
-                }
             }
         });
     }

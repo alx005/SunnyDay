@@ -49,6 +49,7 @@ public class MainActivity extends AppCompatActivity {
     public Resources.Theme getTheme() {
         Resources.Theme theme = super.getTheme();
         // you could also use a switch if you have many themes that could apply
+
         return theme;
     }
 

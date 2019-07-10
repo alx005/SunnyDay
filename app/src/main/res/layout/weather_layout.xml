@@ -53,14 +53,14 @@
             />
 
         <ImageView
-            android:id="@+id/imageView2"
+            android:id="@+id/temperatureImage"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:layout_marginBottom="8dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toEndOf="@+id/imageView"
-            app:srcCompat="@drawable/temperature_black" />
+            app:custom_src="@{null}" />
 
         <TextView
             android:id="@+id/temp"
@@ -70,7 +70,7 @@
             android:layout_marginBottom="8dp"
             app:set_temp="@{forecasts.getTemperature().main_temp}"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/imageView2" />
+            app:layout_constraintStart_toEndOf="@+id/temperatureImage" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

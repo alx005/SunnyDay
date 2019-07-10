@@ -69,7 +69,6 @@
             android:layout_height="21dp"
             android:layout_centerVertical="true"
             android:layout_marginTop="8dp"
-            android:background="@drawable/favorite_black"
             android:focusable="false"
             android:focusableInTouchMode="false"
             android:textOff=""
@@ -78,7 +77,9 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.063"
             app:layout_constraintStart_toEndOf="@+id/cityname"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            app:set_toggle_image="@{null}"
+            />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>
