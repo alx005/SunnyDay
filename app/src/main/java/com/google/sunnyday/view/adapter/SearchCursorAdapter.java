@@ -38,22 +38,19 @@ public class SearchCursorAdapter extends CursorAdapter {
 
     @Override
     public void bindView(View view, Context context, Cursor cursor) {
-        String deal = cursor.getString(cursor.getColumnIndexOrThrow("deal"));
-        String cashback = cursor.getString(cursor.getColumnIndexOrThrow("cashback"));
+        String cityname = cursor.getString(cursor.getColumnIndexOrThrow("cityname"));
 
-        TextView dealsTv = (TextView) view.findViewById(R.id.cityname);
-        dealsTv.setText(deal);
-
-        TextView cashbackTv = (TextView) view.findViewById(R.id.country);
-        cashbackTv.setText("Cashback "+cashback);
+        TextView tv = (TextView) view.findViewById(R.id.cityname);
+        tv.setText(cityname);
 
         view.setOnClickListener(new View.OnClickListener() {
+
             @Override
             public void onClick(View view) {
                 //take next action based user selected item
-                TextView dealText = (TextView) view.findViewById(R.id.cityname);
+                TextView cityname = (TextView) view.findViewById(R.id.cityname);
                 searchView.setIconified(true);
-                Toast.makeText(context, "Selected suggestion "+dealText.getText(),
+                Toast.makeText(context, "Selected suggestion "+cityname.getText(),
                         Toast.LENGTH_LONG).show();
 
             }

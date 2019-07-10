@@ -6,15 +6,12 @@ import android.util.Log;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.Observer;
 
 import com.google.sunnyday.service.model.Weather;
 import com.google.sunnyday.utils.Constants;
 import com.google.sunnyday.utils.Utils;
 
-import java.nio.file.Path;
 import java.sql.Date;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -66,8 +63,12 @@ public class WeatherRepository {
         return callWeatherFromDB(cityname, lat, lon, fetchedDate);
     }
 
-    public LiveData<List<String>> getFavorites() {
-        return weatherDao.getFavorites();
+    public LiveData<List<String>> getFavoriteStrings() {
+        return weatherDao.getFavoriteStrings();
+    }
+
+    public LiveData<List<Weather>> getAllFavorites() {
+        return weatherDao.getAllFavorites();
     }
 
     public LiveData<Weather> getWeatherForecast(String cityname, String lat, String lon, String fetchedDate) {
@@ -183,7 +184,7 @@ public class WeatherRepository {
 
         @Override
         protected Void doInBackground(final Weather... params) {
-            mAsyncTaskDao.update(params[0]);
+            mAsyncTaskDao.insert(params[0]);
             return null;
         }
     }

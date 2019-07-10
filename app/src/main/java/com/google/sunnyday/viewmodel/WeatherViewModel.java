@@ -53,9 +53,14 @@ public class WeatherViewModel extends AndroidViewModel {
         return weatherObservableAll;
     }
 
-    public LiveData<List<String>> getFavorites() {
-        favoriteObservable = weatherRepository.getFavorites();
+    public LiveData<List<String>> getFavoriteStrings() {
+        favoriteObservable = weatherRepository.getFavoriteStrings();
         return favoriteObservable;
+    }
+
+    public LiveData<List<Weather>> getAllFavorites() {
+        weatherObservableAll = weatherRepository.getAllFavorites();
+        return weatherObservableAll;
     }
 
     public void setWeather(Weather weather) {

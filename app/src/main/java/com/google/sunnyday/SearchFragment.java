@@ -45,7 +45,7 @@ public class SearchFragment extends Fragment {
     private RecyclerViewWeatherAdapter adapter;
     private RecyclerView recyclerView;
     private String savedSearch;
-    private List<String> favorites;
+    private List<String> favorites = new ArrayList<>();
 
     @Nullable
     @Override
@@ -103,7 +103,6 @@ public class SearchFragment extends Fragment {
 
         MenuItem menu_search = menu.findItem(R.id.app_bar_search);
 
-
         searchView = (androidx.appcompat.widget.SearchView) menu_search
                 .getActionView();
         searchView.setSearchableInfo(searchManager
@@ -122,6 +121,8 @@ public class SearchFragment extends Fragment {
                 if (query != null && query.length() > 0) {
                     binding.cityname.setText(Utils.camelCase(query));
                     getWeatherWithCityName(query);
+                    searchView.setQuery(null,false);
+                    menu_search.collapseActionView();
                 }
                 return false;
             }
@@ -224,11 +225,11 @@ public class SearchFragment extends Fragment {
         Fragment lifecycleOwner = SearchFragment.this;
         WeatherViewModel viewModel = getViewModel();
 
-        //getFavorites
-        viewModel.getFavorites().observe(lifecycleOwner, new Observer<List<String>>() {
+        //getFavoriteStrings
+        viewModel.getFavoriteStrings().observe(lifecycleOwner, new Observer<List<String>>() {
             @Override
             public void onChanged(List<String> strings) {
-
+                Log.d(TAG, "getFavoriteStrings "+strings.toString());
                 favorites = strings;
                 checkFavorites();
             }
@@ -256,6 +257,7 @@ public class SearchFragment extends Fragment {
                 //save favorites
                 if (btn.isChecked()) {
                     Weather currentWeather = binding.getViewmodel().weather.get();
+                    Log.d(TAG, "saving favorites " + currentWeather.getCityname());
                     currentWeather.setFavorite(true);
                     viewModel.updateWeatherFavorite(currentWeather);
                 }

@@ -17,5 +17,6 @@
     <string name="light_theme">Light</string>
     <string name="dark_theme">Dark</string>
     <string name="theme">theme</string>
+    <string name="remove_favorite_dialog">Are you sure you want to remove favorite?</string>
 
 </resources>
