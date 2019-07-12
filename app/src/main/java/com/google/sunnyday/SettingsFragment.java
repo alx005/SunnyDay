@@ -49,18 +49,7 @@ public class SettingsFragment extends Fragment {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_settings, container, false);
         View view = binding.getRoot();
 
-        getFavorites();
-
         settings = Utils.getSettingsPreference(getActivity());
-        if (settings == null) {
-            settings = new Settings();
-            settings.setFahrenheit(false);
-            settings.setLightTheme(true);
-
-            settings.setCelsius(true);
-            settings.setDarkTheme(false);
-        }
-
         binding.setSettings(settings);
 
         binding.temperatureToggle.addOnButtonCheckedListener(new MaterialButtonToggleGroup.OnButtonCheckedListener() {
@@ -104,6 +93,8 @@ public class SettingsFragment extends Fragment {
                 }
             }
         });
+
+        getFavorites();
 
         return view;
     }

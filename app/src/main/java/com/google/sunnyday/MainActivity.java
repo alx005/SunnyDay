@@ -40,8 +40,17 @@ public class MainActivity extends AppCompatActivity {
         NavigationView navView = findViewById(R.id.navigationView);
         NavigationUI.setupWithNavController(navView, navController);
 
-        Settings setting = Utils.getSettingsPreference(this);
-        if (setting.getLightTheme() ? true : false) {
+        Settings settings = Utils.getSettingsPreference(this);
+        if (settings == null) {
+            settings = new Settings();
+            settings.setFahrenheit(false);
+            settings.setLightTheme(true);
+
+            settings.setCelsius(true);
+            settings.setDarkTheme(false);
+            Utils.saveSettingsPreference(this, settings);
+        }
+        if (settings.getLightTheme() ? true : false) {
             setTheme(R.style.AppTheme);
         } else {
             setTheme(R.style.AppThemeDark);
