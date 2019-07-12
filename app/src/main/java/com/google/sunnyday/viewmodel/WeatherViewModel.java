@@ -38,6 +38,10 @@ public class WeatherViewModel extends AndroidViewModel {
         this.fetchDate = new MutableLiveData<>();
     }
 
+    public LiveData<Weather> getWeatherObservable() {
+        return weatherObservable;
+    }
+
     public LiveData<Weather> getWeatherObservable(boolean fromDB) {
         if (fromDB) {
             weatherObservable = weatherRepository.getWeatherForecastFromDB(cityname.getValue(), lat.getValue(), lon.getValue(), fetchDate.getValue());

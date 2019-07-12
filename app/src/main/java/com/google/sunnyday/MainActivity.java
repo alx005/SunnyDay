@@ -38,6 +38,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
+
         Utils.saveStringToPref(R.string.search, null, this);
 
         NavController navController = Navigation.findNavController(this, R.id.mainNavFragment);
@@ -62,18 +63,4 @@ public class MainActivity extends AppCompatActivity {
         }
 
     }
-
-    @Override
-    public Resources.Theme getTheme() {
-        Resources.Theme theme = super.getTheme();
-        // you could also use a switch if you have many themes that could apply
-
-        return theme;
-    }
-
-//    @Override
-//    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-//        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-//        Log.d(TAG,"permission granted");
-//    }
 }

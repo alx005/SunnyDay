@@ -58,10 +58,10 @@ public class SearchFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
+        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_search, container, false);
         Fragment lifecycleOwner = SearchFragment.this;
         viewModel = ViewModelProviders.of(lifecycleOwner).get(WeatherViewModel.class);
-
-        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_search, container, false);
+        binding.setViewmodel(viewModel);
         View view = binding.getRoot();
 
         recyclerView = binding.searchRv;
@@ -168,23 +168,25 @@ public class SearchFragment extends Fragment {
     private void getWeatherWithCityName(String cityname) {
 
         Fragment lifecycleOwner = SearchFragment.this;
-
-        binding.setViewmodel(viewModel);
         viewModel.setViewModelParams(cityname, null,null, Utils.getDateToday());
         viewModel.getWeatherObservable(true).observe(lifecycleOwner, new Observer<Weather>() {
             @Override
             public void onChanged(Weather weather) {
                 if (weather == null){
                     Log.d(TAG, "failed to get from DB, getting from service");
+                    viewModel.getWeatherObservable().removeObserver(this);
                     viewModel.getWeatherObservable(false).observe(lifecycleOwner, new Observer<Weather>() {
                         @Override
                         public void onChanged(Weather weather) {
                             if (weather != null) {
                                 reloadUIWithWeather(viewModel, weather);
+                                viewModel.getWeatherObservable().removeObserver(this);
                             } else {
                                 Log.e(TAG, "null weather");
                                 binding.loadingProgress.setVisibility(View.GONE);
                                 Toast.makeText(getContext(),getActivity().getString(R.string.weather_failed),Toast.LENGTH_LONG).show();
+                                reloadUIWithWeather(viewModel, null);
+                                viewModel.getWeatherObservable().removeObserver(this);
                             }
                         }
                     });
@@ -196,14 +198,25 @@ public class SearchFragment extends Fragment {
     }
 
     private void reloadUIWithWeather(WeatherViewModel viewModel, Weather weather) {
-        viewModel.setWeather(weather);
 
-        adapter.forecasts = weather.getForecasts();
+        if (adapter.forecasts != null) {
+            adapter.forecasts.clear();
+        }
+
+        if (weather == null) {
+            binding.toggleBtn.setVisibility(View.INVISIBLE);
+        } else {
+            viewModel.setWeather(weather);
+
+            adapter.forecasts = weather.getForecasts();
+
+            binding.toggleBtn.setVisibility(View.VISIBLE);
+
+            checkFavorites();
+
+        }
+
         adapter.notifyDataSetChanged();
-        binding.toggleBtn.setVisibility(View.VISIBLE);
-
-        checkFavorites();
-
 
     }
 

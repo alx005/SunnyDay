@@ -111,15 +111,18 @@ public class HomeFragment extends Fragment {
             public void onChanged(Weather weather) {
                 if (weather == null){
                     Log.d(TAG, "failed to get from DB, getting from service");
+                    viewModel.getWeatherObservable().removeObserver(this);
                     viewModel.getWeatherObservable(false).observe(HomeFragment.this, new Observer<Weather>() {
                         @Override
                         public void onChanged(Weather weather) {
                             if (weather != null) {
                                 reloadUIWithWeather(viewModel, weather);
+                                viewModel.getWeatherObservable().removeObserver(this);
                             } else {
                                 Log.e(TAG, "null weather");
                                 Toast.makeText(getContext(),getActivity().getString(R.string.weather_failed),Toast.LENGTH_LONG).show();
                                 binding.loadingProgress.setVisibility(View.GONE);
+                                viewModel.getWeatherObservable().removeObserver(this);
                             }
                         }
                     });
