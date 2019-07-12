@@ -43,13 +43,4 @@ public class RecyclerViewWeatherAdapter extends RecyclerView.Adapter<RecyclerVie
     public int getItemCount() {
         return forecasts.size();
     }
-
-    public class ViewHolder extends RecyclerView.ViewHolder{
-        public WeatherLayoutBinding weatherLayoutBinding;
-
-        public ViewHolder(WeatherLayoutBinding weatherLayoutBinding) {
-            super(weatherLayoutBinding.getRoot());
-            this.weatherLayoutBinding = weatherLayoutBinding;
-        }
-    }
 }

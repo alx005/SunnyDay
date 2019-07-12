@@ -19,8 +19,11 @@ import android.view.MenuItem;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationView;
+import com.google.sunnyday.service.model.Settings;
 import com.google.sunnyday.utils.FragmentUtils;
 import com.google.sunnyday.utils.Utils;
+
+import java.util.Set;
 
 import static com.google.sunnyday.utils.FragmentUtils.TRANSITION_NONE;
 
@@ -37,7 +40,8 @@ public class MainActivity extends AppCompatActivity {
         NavigationView navView = findViewById(R.id.navigationView);
         NavigationUI.setupWithNavController(navView, navController);
 
-        if (Utils.getSavedIntWithKey(getString(R.string.theme), 1, this) == 0 ? false : true) {
+        Settings setting = Utils.getSettingsPreference(this);
+        if (setting.getLightTheme() ? true : false) {
             setTheme(R.style.AppTheme);
         } else {
             setTheme(R.style.AppThemeDark);

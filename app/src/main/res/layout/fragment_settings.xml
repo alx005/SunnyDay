@@ -4,6 +4,10 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
+        <variable
+            name="settings"
+            type="com.google.sunnyday.service.model.Settings" />
+             <import type="com.google.sunnyday.R"/>
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -41,11 +45,15 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/light_theme"
+                android:checked="@{settings.getLightTheme()}"
+                app:img_selected_bg="@{settings.getLightTheme()}"
                 android:text="@string/light_theme" />
 
             <com.google.android.material.button.MaterialButton
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:checked="@{settings.getDarkTheme()}"
+                app:img_selected_bg="@{settings.getDarkTheme()}"
                 android:id="@+id/dark_theme"
                 android:text="@string/dark_theme" />
 
@@ -64,6 +72,8 @@
             <com.google.android.material.button.MaterialButton
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:checked="@{settings.getCelsius()}"
+                app:img_selected_bg="@{settings.getCelsius()}"
                 android:id="@+id/celsius"
                 android:text="@string/celsius" />
 
@@ -71,6 +81,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/fahrenheit"
+                android:checked="@{settings.getFahrenheit()}"
+                app:img_selected_bg="@{settings.getFahrenheit()}"
                 android:text="@string/fahrenheit" />
 
         </com.google.android.material.button.MaterialButtonToggleGroup>

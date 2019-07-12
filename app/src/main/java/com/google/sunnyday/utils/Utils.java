@@ -16,7 +16,9 @@ import androidx.annotation.ColorInt;
 import androidx.annotation.WorkerThread;
 import androidx.core.graphics.drawable.DrawableCompat;
 
+import com.google.gson.Gson;
 import com.google.sunnyday.R;
+import com.google.sunnyday.service.model.Settings;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -24,6 +26,7 @@ import java.lang.reflect.Method;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.Date;
+import java.util.Set;
 
 
 public final class Utils {
@@ -157,5 +160,22 @@ public final class Utils {
             e.printStackTrace();
         }
         return 0;
+    }
+
+    public static void saveSettingsPreference(Activity activity, Settings settings) {
+        SharedPreferences sharedPref = activity.getPreferences(Context.MODE_PRIVATE);
+        SharedPreferences.Editor prefsEditor = sharedPref.edit();
+        Gson gson = new Gson();
+        String json = gson.toJson(settings); // myObject - instance of MyObject
+        prefsEditor.putString("settings_preference", json);
+        prefsEditor.commit();
+    }
+
+    public static Settings getSettingsPreference(Activity activity) {
+        SharedPreferences sharedPref = activity.getPreferences(Context.MODE_PRIVATE);
+        Gson gson = new Gson();
+        String json = sharedPref.getString("settings_preference", null);
+        Settings obj = gson.fromJson(json, Settings.class);
+        return obj;
     }
 }

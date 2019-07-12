@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
 import android.util.Log;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.ToggleButton;
@@ -12,7 +13,9 @@ import android.widget.ToggleButton;
 import androidx.databinding.BindingAdapter;
 
 import com.bumptech.glide.Glide;
+import com.google.android.material.button.MaterialButton;
 import com.google.sunnyday.R;
+import com.google.sunnyday.service.model.Settings;
 import com.google.sunnyday.utils.Constants;
 import com.google.sunnyday.utils.Utils;
 
@@ -36,8 +39,6 @@ public class CustomBindingAdapter {
                 Log.d(TAG, "imageUrl is null");
             }
 
-            Log.d(TAG, "loading image "+imageName);
-
             Glide.with(view.getContext())
                     .asGif()
                     .load(view.getContext().getResources().getIdentifier(imageName, "drawable", view.getContext().getPackageName()))
@@ -59,9 +60,9 @@ public class CustomBindingAdapter {
     @BindingAdapter({"set_temp"})
     public static void setTemperature(TextView view, String resource) {
         Activity activity = (Activity) view.getContext();
-
+        Settings settings = Utils.getSettingsPreference(activity);
         //celsius
-        if (Utils.getSavedIntWithKey(activity.getString(R.string.temperature), 1, activity) == 0 ? false : true) {
+        if (settings.getCelsius() ? true : false) {
             view.setText(resource+" "+ activity.getString(R.string.celsius));
         } else {
             float fahrenheight = (Float.valueOf(resource) * 9/5) + 32;
@@ -82,11 +83,8 @@ public class CustomBindingAdapter {
         }
     }
 
-    //TODO: not called
     @BindingAdapter({"set_toggle_image"})
     public static void setToggleImage(ToggleButton view, String resource) {
-
-
         Context context = view.getContext();
 
         switch (Utils.getThemeId(context)) {
@@ -97,5 +95,25 @@ public class CustomBindingAdapter {
                 view.setBackgroundDrawable(context.getDrawable(R.drawable.favorite_white));
                 break;
         }
+    }
+
+    @BindingAdapter({"img_selected_bg"})
+    public static void setImageSelectedBackground(MaterialButton view, boolean state) {
+        Context context = view.getContext();
+
+        int highlightColor = Utils.colorOfAttribute(context, R.attr.colorControlHighlight);
+        int highlightedTextColor = Utils.colorOfAttribute(context, R.attr.colorPrimary);
+
+        int normalTextColor = Utils.colorOfAttribute(context, R.attr.colorOnPrimary);
+        int normalColor = Utils.colorOfAttribute(context, R.attr.colorPrimary);
+
+        if (state) {
+            view.setTextColor(highlightedTextColor);
+            Utils.setTintColor(view, highlightColor);
+        } else {
+            view.setTextColor(normalTextColor);
+            Utils.setTintColor(view, normalColor);
+        }
+
     }
 }

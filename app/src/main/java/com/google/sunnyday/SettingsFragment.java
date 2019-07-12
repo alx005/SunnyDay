@@ -1,6 +1,7 @@
 package com.google.sunnyday;
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 
@@ -8,6 +9,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
@@ -22,6 +25,7 @@ import android.widget.ListView;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.button.MaterialButtonToggleGroup;
 import com.google.sunnyday.databinding.FragmentSettingsBinding;
+import com.google.sunnyday.service.model.Settings;
 import com.google.sunnyday.service.model.Weather;
 import com.google.sunnyday.utils.Utils;
 import com.google.sunnyday.viewmodel.WeatherViewModel;
@@ -35,32 +39,29 @@ public class SettingsFragment extends Fragment {
     private ArrayAdapter<String> adapter;
     private FragmentSettingsBinding binding;
     private static String TAG = SettingsFragment.class.getSimpleName();
+    private Settings settings;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
+        Log.d(TAG, "onCreateView");
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_settings, container, false);
         View view = binding.getRoot();
 
         getFavorites();
 
-        binding.celsius.setChecked(Utils.getSavedIntWithKey(getActivity().getString(R.string.temperature), 1, getActivity()) == 0 ? false : true);
-        binding.lightTheme.setChecked(Utils.getSavedIntWithKey(getActivity().getString(R.string.theme), 1, getActivity()) == 0 ? false : true);
+        settings = Utils.getSettingsPreference(getActivity());
+        if (settings == null) {
+            settings = new Settings();
+            settings.setFahrenheit(false);
+            settings.setLightTheme(true);
 
-        //TODO: remove when binding adapter is working
-        if (binding.celsius.isChecked()) {
-            switchSelectedBtn(binding.celsius, binding.fahrenheit);
-        } else  {
-            switchSelectedBtn(binding.fahrenheit, binding.celsius);
+            settings.setCelsius(true);
+            settings.setDarkTheme(false);
         }
 
-        if (binding.lightTheme.isChecked()) {
-            switchSelectedBtn(binding.lightTheme, binding.darkTheme);
-        } else  {
-            switchSelectedBtn(binding.darkTheme, binding.lightTheme);
-        }
-
+        binding.setSettings(settings);
 
         binding.temperatureToggle.addOnButtonCheckedListener(new MaterialButtonToggleGroup.OnButtonCheckedListener() {
             @Override
@@ -71,12 +72,15 @@ public class SettingsFragment extends Fragment {
 
                 if (isChecked) {
                     if (selectedBtn == binding.celsius) {
-                        switchSelectedBtn(selectedBtn, binding.fahrenheit);
-                        Utils.saveIntToPref(R.string.temperature, 1, getActivity());
+                        settings.setCelsius(true);
+                        settings.setFahrenheit(false);
                     } else {
-                        switchSelectedBtn(selectedBtn, binding.celsius);
-                        Utils.saveIntToPref(R.string.temperature, 0, getActivity());
+                        settings.setCelsius(false);
+                        settings.setFahrenheit(true);
                     }
+
+                    binding.invalidateAll();
+                    Utils.saveSettingsPreference(getActivity(), settings);
                 }
             }
         });
@@ -85,25 +89,26 @@ public class SettingsFragment extends Fragment {
             @Override
             public void onButtonChecked(MaterialButtonToggleGroup group, int checkedId, boolean isChecked) {
                 MaterialButton selectedBtn = getActivity().findViewById(checkedId);
-
                 if (isChecked) {
-                    if (selectedBtn == binding.lightTheme) {
-                        switchSelectedBtn(selectedBtn, binding.darkTheme);
-                        Utils.saveIntToPref(R.string.theme, 1, getActivity());
-//                        getActivity().setTheme(R.style.AppTheme);
+                    if (selectedBtn == binding.lightTheme && settings.getLightTheme() == false) {
+                        settings.setLightTheme(true);
+                        settings.setDarkTheme(false);
                         getActivity().recreate();
-                    } else {
-                        switchSelectedBtn(selectedBtn, binding.lightTheme);
-                        Utils.saveIntToPref(R.string.theme, 0, getActivity());
-//                        getActivity().setTheme(R.style.AppThemeDark);
+                    } else if (selectedBtn == binding.darkTheme && settings.getDarkTheme() == false) {
+                        settings.setLightTheme(false);
+                        settings.setDarkTheme(true);
                         getActivity().recreate();
                     }
+
+                    Utils.saveSettingsPreference(getActivity(), settings);
                 }
             }
         });
 
         return view;
     }
+
+
 
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
