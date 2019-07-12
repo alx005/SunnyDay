@@ -50,13 +50,6 @@ dependencies {
     implementation "com.squareup.retrofit2:retrofit:$project.retrofit"
     implementation "com.squareup.retrofit2:converter-gson:$project.retrofit"
 
-//    // Dagger
-//    annotationProcessor "com.google.dagger:dagger-android-processor:$dagger_version"
-//    annotationProcessor "com.google.dagger:dagger-compiler:$dagger_version"
-//    implementation "com.google.dagger:dagger:$project.dagger_version"
-//    implementation "com.google.dagger:dagger-android:$project.dagger_version"
-//    implementation "com.google.dagger:dagger-android-support:$project.dagger_version"
-
 
     //glide
     implementation 'com.github.bumptech.glide:glide:4.9.0'

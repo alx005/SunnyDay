@@ -180,7 +180,6 @@ public class SearchFragment extends Fragment {
                         public void onChanged(Weather weather) {
                             if (weather != null) {
                                 reloadUIWithWeather(viewModel, weather);
-                                viewModel.getWeatherObservable().removeObserver(this);
                             } else {
                                 Log.e(TAG, "null weather");
                                 binding.loadingProgress.setVisibility(View.GONE);
@@ -240,7 +239,6 @@ public class SearchFragment extends Fragment {
 
     private void setupToggleBtn(){
         Fragment lifecycleOwner = SearchFragment.this;
-
         //getFavoriteStrings
         viewModel.getFavoriteStrings().observe(lifecycleOwner, new Observer<List<String>>() {
             @Override
@@ -255,7 +253,6 @@ public class SearchFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 ToggleButton btn = (ToggleButton) v;
-                Log.i(TAG, btn.isChecked() ? "selected" : "not selected");
                 Weather currentWeather = binding.getViewmodel().weather.get();
                 Log.d(TAG, "saving favorites " + currentWeather.getCityname());
                 currentWeather.setFavorite(btn.isChecked());
