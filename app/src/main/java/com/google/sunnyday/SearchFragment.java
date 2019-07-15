@@ -10,6 +10,7 @@ import androidx.databinding.BindingMethod;
 import androidx.databinding.BindingMethods;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -59,8 +60,6 @@ public class SearchFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_search, container, false);
-        Fragment lifecycleOwner = SearchFragment.this;
-        viewModel = ViewModelProviders.of(lifecycleOwner).get(WeatherViewModel.class);
         binding.setViewmodel(viewModel);
         View view = binding.getRoot();
 
@@ -98,6 +97,10 @@ public class SearchFragment extends Fragment {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
 
+        Fragment lifecycleOwner = SearchFragment.this;
+        viewModel = ViewModelProviders.of(lifecycleOwner).get(WeatherViewModel.class);
+
+
         Log.i(TAG, "onCreate");
     }
 
@@ -130,8 +133,9 @@ public class SearchFragment extends Fragment {
                 if (query != null && query.length() > 0) {
                     binding.cityname.setText(Utils.camelCase(query));
                     getWeatherWithCityName(query);
-                    searchView.setQuery(null,false);
+//                    searchView.setQuery(null,false);
                     menu_search.collapseActionView();
+
                 }
                 return false;
             }
@@ -167,36 +171,113 @@ public class SearchFragment extends Fragment {
 
     private void getWeatherWithCityName(String cityname) {
 
+        Log.d(TAG,"getWeatherWithCityName");
+        reloadUIWithWeather(null);
         Fragment lifecycleOwner = SearchFragment.this;
         viewModel.setViewModelParams(cityname, null,null, Utils.getDateToday());
-        viewModel.getWeatherObservable(true).observe(lifecycleOwner, new Observer<Weather>() {
+
+//        Observer<Weather> serviceObserver = new Observer<Weather>() {
+//            @Override
+//            public void onChanged(Weather weather) {
+//                if (weather == null) {
+//                    Log.d(TAG, "Weather fail service");
+////                    viewModel.getWeatherObservable().removeObserver(this);
+//                    viewModel.getWeatherObservable().removeObservers(lifecycleOwner);
+//                } else {
+//                    Log.d(TAG, "Weather from service");
+////                    viewModel.getWeatherObservable().removeObserver(this);
+//                }
+//
+//            }
+//        };
+//
+//        Observer<Weather> dbObserver = new Observer<Weather>() {
+//            @Override
+//            public void onChanged(Weather weather) {
+//                if (weather == null) {
+//                    Log.d(TAG, "Weather fail db");
+//                    viewModel.getWeatherObservable(false).observe(lifecycleOwner, serviceObserver);
+//                } else {
+//                    Log.d(TAG, "Weather from db");
+//                    reloadUIWithWeather(viewModel, weather);
+//                    viewModel.getWeatherObservable().removeObservers(lifecycleOwner);
+//                }
+//
+//            }
+//        };
+
+
+        Observer<Weather> serviceObserver = new Observer<Weather>() {
             @Override
             public void onChanged(Weather weather) {
-                if (weather == null){
-                    Log.d(TAG, "failed to get from DB, getting from service");
-                    viewModel.getWeatherObservable().removeObserver(this);
-                    viewModel.getWeatherObservable(false).observe(lifecycleOwner, new Observer<Weather>() {
+                while (viewModel.getWeatherObservable().hasObservers()) {
+                    viewModel.getWeatherObservable().removeObservers(lifecycleOwner);
+                }
+                if (weather != null) {
+                    viewModel.getWeatherObservable(true).observe(lifecycleOwner, new Observer<Weather>() {
                         @Override
                         public void onChanged(Weather weather) {
+                            Log.d(TAG, "Final");
                             if (weather != null) {
-                                reloadUIWithWeather(viewModel, weather);
+                                reloadUIWithWeather(weather);
+                                viewModel.getWeatherObservable().removeObservers(lifecycleOwner);
                             } else {
-                                Log.e(TAG, "null weather");
-                                binding.loadingProgress.setVisibility(View.GONE);
-                                Toast.makeText(getContext(),getActivity().getString(R.string.weather_failed),Toast.LENGTH_LONG).show();
-                                reloadUIWithWeather(viewModel, null);
-                                viewModel.getWeatherObservable().removeObserver(this);
+                                Log.d(TAG, "Weather fail db final");
                             }
                         }
                     });
-                } else {
-                    reloadUIWithWeather(viewModel, weather);
                 }
+
             }
-        });
+        };
+
+        Observer<Weather> dbObserver = new Observer<Weather>() {
+            @Override
+            public void onChanged(Weather weather) {
+                if (weather == null) {
+                    Log.d(TAG, "Weather fail db");
+                    viewModel.getWeatherObservable().removeObservers(lifecycleOwner);
+                    viewModel.getWeatherObservable(false).observe(lifecycleOwner, serviceObserver);
+                } else {
+                    Log.d(TAG, "Weather from db");
+                    viewModel.getWeatherObservable().removeObservers(lifecycleOwner);
+                    reloadUIWithWeather(weather);
+                }
+
+            }
+        };
+
+        viewModel.getWeatherObservable().removeObservers(lifecycleOwner);
+        viewModel.getWeatherObservable(true).observe(lifecycleOwner, dbObserver);
+
+//        viewModel.getWeatherObservable(true).observe(lifecycleOwner, new Observer<Weather> () {
+//            @Override
+//            public void onChanged(Weather weather) {
+//                if (weather == null){
+//                    Log.d(TAG, "failed to get from DB, getting from service");
+//                    viewModel.getWeatherObservable(false).observe(lifecycleOwner, new Observer<Weather>() {
+//                        @Override
+//                        public void onChanged(Weather weather) {
+//                            if (weather != null) {
+//                                reloadUIWithWeather(viewModel, weather);
+//                                viewModel.getWeatherObservable().removeObserver(this);
+//                            } else {
+//                                Log.e(TAG, "null weather");
+//                                binding.loadingProgress.setVisibility(View.GONE);
+//                                Toast.makeText(getContext(),getActivity().getString(R.string.weather_failed),Toast.LENGTH_LONG).show();
+//                                reloadUIWithWeather(viewModel, null);
+//                                viewModel.getWeatherObservable().removeObserver(this);
+//                            }
+//                        }
+//                    });
+//                } else {
+//                    reloadUIWithWeather(viewModel, weather);
+//                }
+//            }
+//        });
     }
 
-    private void reloadUIWithWeather(WeatherViewModel viewModel, Weather weather) {
+    private void reloadUIWithWeather(Weather weather) {
 
         if (adapter.forecasts != null) {
             adapter.forecasts.clear();
@@ -206,13 +287,9 @@ public class SearchFragment extends Fragment {
             binding.toggleBtn.setVisibility(View.INVISIBLE);
         } else {
             viewModel.setWeather(weather);
-
             adapter.forecasts = weather.getForecasts();
-
             binding.toggleBtn.setVisibility(View.VISIBLE);
-
             checkFavorites();
-
         }
 
         adapter.notifyDataSetChanged();
@@ -234,18 +311,20 @@ public class SearchFragment extends Fragment {
             } else {
                 binding.toggleBtn.setChecked(false);
             }
+
         }
     }
 
     private void setupToggleBtn(){
-        Fragment lifecycleOwner = SearchFragment.this;
+
+        Log.d(TAG, "toggle btn");
         //getFavoriteStrings
+        Fragment lifecycleOwner = SearchFragment.this;
         viewModel.getFavoriteStrings().observe(lifecycleOwner, new Observer<List<String>>() {
             @Override
             public void onChanged(List<String> strings) {
-                Log.d(TAG, "getFavoriteStrings "+strings.toString());
+                Log.d(TAG, "got favorites "+strings.toString());
                 favorites = strings;
-                checkFavorites();
             }
         });
 
@@ -257,6 +336,7 @@ public class SearchFragment extends Fragment {
                 Log.d(TAG, "saving favorites " + currentWeather.getCityname());
                 currentWeather.setFavorite(btn.isChecked());
                 viewModel.updateWeatherFavorite(currentWeather);
+
 
             }
         });

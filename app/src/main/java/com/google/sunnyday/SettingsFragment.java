@@ -13,6 +13,8 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -140,6 +142,10 @@ public class SettingsFragment extends Fragment {
                         if (which == 0)
                         {
                             removeFavorite(position);
+
+                            //try to navigate
+                            NavController navController = Navigation.findNavController(getActivity(), R.id.mainNavFragment);
+                            navController.navigate(R.id.searchRv);
                         }
                     }
                 });

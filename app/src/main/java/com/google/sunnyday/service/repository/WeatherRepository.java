@@ -139,6 +139,8 @@ public class WeatherRepository {
 
                     weather.setLat(lat);
                     weather.setLon(lon);
+                    weather.setFavorite(false);
+
                     if (cityname != null) {
                         weather.setCityname(cityname.toLowerCase());
                     }
