@@ -143,9 +143,6 @@ public class SettingsFragment extends Fragment {
                         {
                             removeFavorite(position);
 
-                            //try to navigate
-                            NavController navController = Navigation.findNavController(getActivity(), R.id.mainNavFragment);
-                            navController.navigate(R.id.searchRv);
                         }
                     }
                 });

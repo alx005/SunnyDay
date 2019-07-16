@@ -95,13 +95,23 @@ public class SearchFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.i(TAG, "onCreate");
+
         setHasOptionsMenu(true);
+
 
         Fragment lifecycleOwner = SearchFragment.this;
         viewModel = ViewModelProviders.of(lifecycleOwner).get(WeatherViewModel.class);
 
+        //getFavoriteStrings
+        viewModel.getFavoriteStrings().observe(lifecycleOwner, new Observer<List<String>>() {
+            @Override
+            public void onChanged(List<String> strings) {
+                Log.d(TAG, "got favorites "+strings.toString());
+                favorites = strings;
+            }
+        });
 
-        Log.i(TAG, "onCreate");
     }
 
     @Override
@@ -155,19 +165,6 @@ public class SearchFragment extends Fragment {
 
     }
 
-    /**
-     * Shows and hides views for when the Activity is processing an image
-     */
-    private void showWorkInProgress() {
-        Log.d(TAG, "showWorkInProgress");
-    }
-
-    /**
-     * Shows and hides views for when the Activity is done processing an image
-     */
-    private void showWorkFinished(String JSONString) {
-        Log.d(TAG, "showWorkFinished");
-    }
 
     private void getWeatherWithCityName(String cityname) {
 
@@ -176,43 +173,12 @@ public class SearchFragment extends Fragment {
         Fragment lifecycleOwner = SearchFragment.this;
         viewModel.setViewModelParams(cityname, null,null, Utils.getDateToday());
 
-//        Observer<Weather> serviceObserver = new Observer<Weather>() {
-//            @Override
-//            public void onChanged(Weather weather) {
-//                if (weather == null) {
-//                    Log.d(TAG, "Weather fail service");
-////                    viewModel.getWeatherObservable().removeObserver(this);
-//                    viewModel.getWeatherObservable().removeObservers(lifecycleOwner);
-//                } else {
-//                    Log.d(TAG, "Weather from service");
-////                    viewModel.getWeatherObservable().removeObserver(this);
-//                }
-//
-//            }
-//        };
-//
-//        Observer<Weather> dbObserver = new Observer<Weather>() {
-//            @Override
-//            public void onChanged(Weather weather) {
-//                if (weather == null) {
-//                    Log.d(TAG, "Weather fail db");
-//                    viewModel.getWeatherObservable(false).observe(lifecycleOwner, serviceObserver);
-//                } else {
-//                    Log.d(TAG, "Weather from db");
-//                    reloadUIWithWeather(viewModel, weather);
-//                    viewModel.getWeatherObservable().removeObservers(lifecycleOwner);
-//                }
-//
-//            }
-//        };
-
-
         Observer<Weather> serviceObserver = new Observer<Weather>() {
             @Override
             public void onChanged(Weather weather) {
-                while (viewModel.getWeatherObservable().hasObservers()) {
-                    viewModel.getWeatherObservable().removeObservers(lifecycleOwner);
-                }
+
+                viewModel.getWeatherObservable().removeObservers(lifecycleOwner);
+
                 if (weather != null) {
                     viewModel.getWeatherObservable(true).observe(lifecycleOwner, new Observer<Weather>() {
                         @Override
@@ -250,31 +216,6 @@ public class SearchFragment extends Fragment {
         viewModel.getWeatherObservable().removeObservers(lifecycleOwner);
         viewModel.getWeatherObservable(true).observe(lifecycleOwner, dbObserver);
 
-//        viewModel.getWeatherObservable(true).observe(lifecycleOwner, new Observer<Weather> () {
-//            @Override
-//            public void onChanged(Weather weather) {
-//                if (weather == null){
-//                    Log.d(TAG, "failed to get from DB, getting from service");
-//                    viewModel.getWeatherObservable(false).observe(lifecycleOwner, new Observer<Weather>() {
-//                        @Override
-//                        public void onChanged(Weather weather) {
-//                            if (weather != null) {
-//                                reloadUIWithWeather(viewModel, weather);
-//                                viewModel.getWeatherObservable().removeObserver(this);
-//                            } else {
-//                                Log.e(TAG, "null weather");
-//                                binding.loadingProgress.setVisibility(View.GONE);
-//                                Toast.makeText(getContext(),getActivity().getString(R.string.weather_failed),Toast.LENGTH_LONG).show();
-//                                reloadUIWithWeather(viewModel, null);
-//                                viewModel.getWeatherObservable().removeObserver(this);
-//                            }
-//                        }
-//                    });
-//                } else {
-//                    reloadUIWithWeather(viewModel, weather);
-//                }
-//            }
-//        });
     }
 
     private void reloadUIWithWeather(Weather weather) {
@@ -318,15 +259,6 @@ public class SearchFragment extends Fragment {
     private void setupToggleBtn(){
 
         Log.d(TAG, "toggle btn");
-        //getFavoriteStrings
-        Fragment lifecycleOwner = SearchFragment.this;
-        viewModel.getFavoriteStrings().observe(lifecycleOwner, new Observer<List<String>>() {
-            @Override
-            public void onChanged(List<String> strings) {
-                Log.d(TAG, "got favorites "+strings.toString());
-                favorites = strings;
-            }
-        });
 
         binding.toggleBtn.setOnClickListener(new View.OnClickListener() {
             @Override
