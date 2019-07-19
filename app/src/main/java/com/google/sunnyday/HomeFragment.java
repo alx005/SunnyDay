@@ -3,6 +3,7 @@ package com.google.sunnyday;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -60,6 +61,7 @@ public class HomeFragment extends Fragment {
 
         recyclerView = binding.weatherRv;
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), RecyclerView.VERTICAL, false));
+        recyclerView.setBackgroundColor(Color.TRANSPARENT);
 
         adapter = new RecyclerViewWeatherAdapter(new ArrayList<>());
         recyclerView.setAdapter(adapter);

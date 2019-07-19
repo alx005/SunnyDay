@@ -15,8 +15,10 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
+import androidx.navigation.fragment.NavHostFragment;
 
 import android.util.Log;
+import android.view.DragEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -134,6 +136,18 @@ public class SettingsFragment extends Fragment {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+                if (position >= 0) {
+                    String weather = (String) parent.getAdapter().getItem(position);
+                    SettingsFragmentDirections.FavoritesTappedAction action = SettingsFragmentDirections.favoritesTappedAction(weather);
+                    NavHostFragment.findNavController(SettingsFragment.this).navigate(action);
+                }
+            }
+        });
+
+        listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
                 builder.setTitle(R.string.remove_favorite_dialog);
                 builder.setItems(new String[]{"Yes", "No"}, new DialogInterface.OnClickListener() {
@@ -147,9 +161,10 @@ public class SettingsFragment extends Fragment {
                     }
                 });
                 builder.show();
-
+                return true;
             }
         });
+
         adapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_list_item_checked);
         listView.setAdapter(adapter);
 

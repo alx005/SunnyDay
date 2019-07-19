@@ -13,11 +13,20 @@
     <fragment
         android:id="@+id/bottomNavFragmentSearch"
         android:name="com.google.sunnyday.SearchFragment"
-        tools:layout="@layout/fragment_search"/>
+        tools:layout="@layout/fragment_search">
+    </fragment>
 
     <fragment
         android:id="@+id/bottomNavFragmentSettings"
         android:name="com.google.sunnyday.SettingsFragment"
-        tools:layout="@layout/fragment_settings"/>
+        tools:layout="@layout/fragment_settings">
+        <action
+            android:id="@+id/favoritesTappedAction"
+            app:destination="@id/bottomNavFragmentSearch">
+            <argument
+                android:name="searchString"
+                app:argType="string" />
+        </action>
+    </fragment>
 
 </navigation>

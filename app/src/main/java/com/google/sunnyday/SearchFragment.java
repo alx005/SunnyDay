@@ -2,6 +2,7 @@ package com.google.sunnyday;
 
 import android.app.SearchManager;
 import android.content.Context;
+import android.graphics.Color;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -65,11 +66,19 @@ public class SearchFragment extends Fragment {
 
         recyclerView = binding.searchRv;
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), RecyclerView.VERTICAL, false));
+        recyclerView.setBackgroundColor(Color.TRANSPARENT);
 
         adapter = new RecyclerViewWeatherAdapter(new ArrayList<>());
         recyclerView.setAdapter(adapter);
 
         setupToggleBtn();
+
+
+        if (getArguments() != null) {
+            savedSearch = getArguments().getString(getActivity().getString(R.string.search_string));
+            binding.cityname.setText(Utils.camelCase(savedSearch));
+            getWeatherWithCityName(savedSearch);
+        }
 
         return view;
     }
@@ -99,7 +108,6 @@ public class SearchFragment extends Fragment {
 
         setHasOptionsMenu(true);
 
-
         Fragment lifecycleOwner = SearchFragment.this;
         viewModel = ViewModelProviders.of(lifecycleOwner).get(WeatherViewModel.class);
 
@@ -113,6 +121,7 @@ public class SearchFragment extends Fragment {
         });
 
     }
+
 
     @Override
     public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
@@ -172,13 +181,13 @@ public class SearchFragment extends Fragment {
         reloadUIWithWeather(null);
         Fragment lifecycleOwner = SearchFragment.this;
         viewModel.setViewModelParams(cityname, null,null, Utils.getDateToday());
+        binding.loadingProgress.setVisibility(View.VISIBLE);
 
         Observer<Weather> serviceObserver = new Observer<Weather>() {
             @Override
             public void onChanged(Weather weather) {
 
                 viewModel.getWeatherObservable().removeObservers(lifecycleOwner);
-
                 if (weather != null) {
                     viewModel.getWeatherObservable(true).observe(lifecycleOwner, new Observer<Weather>() {
                         @Override
@@ -192,6 +201,8 @@ public class SearchFragment extends Fragment {
                             }
                         }
                     });
+                } else {
+                    reloadUIWithWeather(weather);
                 }
 
             }
@@ -234,7 +245,7 @@ public class SearchFragment extends Fragment {
         }
 
         adapter.notifyDataSetChanged();
-
+        binding.loadingProgress.setVisibility(View.INVISIBLE);
     }
 
 
