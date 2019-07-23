@@ -66,14 +66,14 @@ public class SearchFragment extends Fragment {
 
         recyclerView = binding.searchRv;
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), RecyclerView.VERTICAL, false));
-        recyclerView.setBackgroundColor(Color.TRANSPARENT);
+
 
         adapter = new RecyclerViewWeatherAdapter(new ArrayList<>());
         recyclerView.setAdapter(adapter);
 
         setupToggleBtn();
 
-
+        //params from settings
         if (getArguments() != null) {
             savedSearch = getArguments().getString(getActivity().getString(R.string.search_string));
             binding.cityname.setText(Utils.camelCase(savedSearch));
@@ -139,9 +139,9 @@ public class SearchFragment extends Fragment {
         searchView.setSearchableInfo(searchManager
                 .getSearchableInfo(getActivity().getComponentName()));
         searchView.setMaxWidth(Integer.MAX_VALUE);
-        searchView.setFocusable(true);
-        searchView.setIconifiedByDefault(true);
-        searchView.setIconified(false);
+//        searchView.setFocusable(true);
+//        searchView.setIconifiedByDefault(true);
+//        searchView.setIconified(false);
 
         // listening to search query text change
         searchView.setOnQueryTextListener(new androidx.appcompat.widget.SearchView.OnQueryTextListener() {
