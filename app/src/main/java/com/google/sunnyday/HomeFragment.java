@@ -4,6 +4,8 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.location.Address;
+import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -34,6 +36,7 @@ import com.google.sunnyday.viewmodel.WeatherViewModel;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import static android.content.Context.LOCATION_SERVICE;
 
@@ -136,6 +139,36 @@ public class HomeFragment extends Fragment {
 
     }
 
+    private void startGeocoder(Location location) {
+        Geocoder geocoder = new Geocoder(getContext());
+
+        try {
+
+            List<Address> addresses = geocoder.getFromLocation(location.getLatitude(), location.getLongitude(), 1);
+            Address address = addresses.get(0);
+            ArrayList<String> addressFragments = new ArrayList<String>();
+
+            // Fetch the address lines using getAddressLine,
+            // join them, and send them to the thread.
+            for(int i = 0; i <= address.getMaxAddressLineIndex(); i++) {
+                addressFragments.add(address.getAddressLine(i));
+            }
+
+            Log.i(TAG, "Addresses: \n" + addressFragments.toString());
+
+        } catch (Throwable throwable) {
+
+            // Technically WorkManager will return Result.failure()
+            // but it's best to be explicit about it.
+            // Thus if there were errors, we're return FAILURE
+            Log.e(TAG, "error fetching JSON", throwable);
+        }
+
+
+
+
+    }
+
     private void reloadUIWithWeather(WeatherViewModel viewModel, Weather weather) {
         viewModel.setWeather(weather);
 
@@ -174,7 +207,7 @@ public class HomeFragment extends Fragment {
         public void onLocationChanged(final Location location) {
             Log.d(TAG,"onLocationChanged");
             getWeatherWithLocation(location);
-
+            startGeocoder(location);
 //            Call<Weather> call = service.getCurrentWeather(Double.toString(location.getLatitude()), Double.toString(location.getLongitude()), appid, units);
 //            call.enqueue(new Callback<Weather>() {
 //                @Override

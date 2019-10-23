@@ -5,6 +5,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -30,7 +31,23 @@ public class RecyclerViewWeatherAdapter extends RecyclerView.Adapter<RecyclerVie
         Context context = parent.getContext();
         LayoutInflater inflater = LayoutInflater.from(context);
         View statusContainer = inflater.inflate(R.layout.weather_layout, parent, false);
+
+        statusContainer.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+//                RecyclerView recyclerView = (RecyclerView) v.getParent();
+//
+//                int itemPosition = recyclerView.getChildLayoutPosition(v);
+//                Weather.Forecasts item = forecasts.get(itemPosition);
+//
+//                Log.d("ALEX", item.getWeatherList().get(0).weather_description());
+
+            }
+        });
+
         return new RecyclerViewWeatherHolder(statusContainer);
+
     }
 
     @Override

@@ -21,6 +21,7 @@ public class WeatherViewModel extends AndroidViewModel {
     private LiveData<List<Weather>> weatherObservableAll = new LiveData<List<Weather>>() {
     };
 
+
     private final MutableLiveData<String> lat,lon;
     private final MutableLiveData<String> cityname, fetchDate;
     private static String TAG = WeatherViewModel.class.getSimpleName();
